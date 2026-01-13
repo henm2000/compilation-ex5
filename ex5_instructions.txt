@@ -1,0 +1,142 @@
+# Exercise 5: Code Generation
+# Course: Compilation 0368-3133
+# Due: 15/3/2026 before 23:59
+
+## 1. Assignment Overview
+Congratulations! You have reached the final step in building a complete compiler for L programs. The fifth and final exercise implements the code generation phase for L programs. The chosen destination language is MIPS assembly.
+
+The exercise is divided into three parts:
+1. Recursively traverse the AST to create an intermediate representation (IR) of the program.
+2. Perform liveness analysis, build the interference graph, and allocate temporaries into 10 physical registers ($t0-$t9).
+3. Translate the IR into MIPS instructions.
+
+* **Input:** A single text file containing an L program.
+* **Output:** A single text file containing the corresponding MIPS assembly translation.
+
+## 2. The L Runtime Behavior
+
+### 2.1 Binary Operations
+
+**Integers:**
+Integers in L are artificially bounded between -2^15 and 2^15. L uses **saturation arithmetic**: results exceeding the range are "clamped" to the nearest boundary.
+For any operator `op` in {+, -, *, /} (where / is integer floor division), the operation is defined as:
+* If (a op b) <= -2^15  -> result is -2^15
+* If (a op b) >= 2^15 - 1 -> result is 2^15 - 1
+* Otherwise -> result is a op b
+
+**Strings:**
+* Concatenation: When concatenating two null-terminated strings, the result is allocated on the heap and must be null-terminated.
+* Equality: Testing content equality returns 1 if equal, 0 otherwise.
+
+**Arrays & Classes:**
+* Equality testing compares address values (pointers).
+* Result is 1 if addresses are equal, 0 otherwise.
+
+### 2.2 If and While Statements
+Control flow relies on integer conditions:
+* **0** represents **false**.
+* **Any non-zero value** represents **true**.
+
+**While statements:** Condition evaluated before every iteration.
+**If statements:** Standard if/else semantics.
+
+### 2.3 Program Execution and Evaluation Order
+
+**Program Entry:**
+Every valid L program has a function `void main()`. This is the entry point.
+
+**Function Argument Evaluation:**
+Arguments are evaluated from **left to right**.
+*Example:* In `foo(inc(), dec())`, `inc()` is executed before `dec()`.
+
+**Global Variables:**
+Initialized in the order of appearance in the program before entering `main`.
+
+**Binary Operations & Assignments:**
+The **left-hand side** is evaluated first.
+
+**Class Data Members:**
+Initialized during object construction. Order is irrelevant. Members are initialized only with constant literals.
+
+### 2.4 Library Functions
+The names `PrintInt` and `PrintString` are never redefined.
+* `PrintInt`: Prints integer followed by a single space.
+* `PrintString`: Prints string.
+* Implementation: Must use MIPS system calls.
+
+### 2.5 Runtime Checks
+The program must print a specific error message and exit gracefully (using the exit syscall) for the following errors:
+
+1.  **Division by zero:**
+    * Message: `Illegal Division By Zero`
+2.  **Invalid pointer dereference:** (Accessing field/method/array of `nil` or uninitialized object)
+    * Message: `Invalid Pointer Dereference`
+3.  **Out of bound array access:** (Index negative or >= length)
+    * Message: `Access Violation`
+
+### 2.6 System Calls
+You will use the following MIPS system calls:
+
+| System Call | MIPS Code | Remarks |
+| :--- | :--- | :--- |
+| **PrintInt(17)** | `li $a0, 17`<br>`li $v0, 1`<br>`syscall` | Prints integer. |
+| **PrintString(s)** | `li $v0, 4`<br>`syscall` | `$a0` must contain address of null-terminated string. |
+| **Malloc(17)** | `li $a0, 17`<br>`li $v0, 9`<br>`syscall` | Address returned in `$v0`. Size in bytes. |
+| **Exit()** | `li $v0, 10`<br>`syscall` | Ends program. |
+
+## 3. Additional Guidelines
+
+**Uninitialized Variables:**
+Accessing uninitialized variables results in undefined behavior. You do not need to check for this.
+
+**Register Allocation:**
+* Performed on the IR.
+* Allocate only registers **$t0-$t9**.
+* Implement simplification-based allocation. No spilling or MOV coalescing required.
+* If allocation fails (spill needed), print `Register Allocation Failed` and terminate.
+
+**MIPS Code Generation:**
+* General translation is straightforward.
+* If translation requires extra registers beyond those in the IR command (e.g., for array access), you may use registers **$s0-$s9** (Note: Text says "50-59", likely referring to saved/temp registers available for the generator).
+
+## 4. Input and Output
+
+**Input:** A single text file (L program).
+**Output:** A single text file containing EXACTLY one of the following:
+
+1.  `ERROR` (Lexical error)
+2.  `ERROR (location)` (Syntax/Semantic error; location is line number)
+3.  `Register Allocation Failed`
+4.  The MIPS assembly translation (If no errors)
+
+## 5. SPIM Simulator
+* Simulator: SPIM 8.0
+* Grading: Output file will be run directly in SPIM.
+
+## 6. Submission Guidelines
+
+**Zip Structure:** `<ID>.zip` containing:
+1.  `ids.txt`: IDs of team members (one per line).
+2.  `ex5/`: Folder containing source code and `Makefile`.
+
+**Makefile:**
+* Must be at `ex5/Makefile`.
+* Must compile code into a runnable executable (script/jar) named `COMPILER` inside `ex5/`.
+
+**Execution:**
+`COMPILER` receives 2 parameters:
+1.  `input` (Input file path)
+2.  `output` (Output file path)
+
+**Self-Check:**
+Run the provided `self-check.py` script on the school server (`nova.cs.tau.ac.il`) before submitting.
+
+## 7. Starter Code
+Location: `ex5` directory.
+* `src/ir/*.java`: IR command classes.
+* `src/mips/MipsGenerator.java`: MIPS printing methods.
+* `examples`: Sample L programs and MIPS translations.
+
+**Build Commands:**
+* `make`: Generates parser/lexer and compiles to `COMPILER`.
+* `make everything`: Runs `COMPILER` on `input/Input.txt`, generates `MIPS.txt`, runs SPIM, and creates `MIPS_OUTPUT.txt`.
