@@ -5,6 +5,7 @@ import ir.*;
 import mips.*;
 import java.util.*;
 import exceptions.*;
+import regalloc.*;
 
 public class Main
 {
@@ -52,24 +53,44 @@ public class Main
 			/*************************/
 			if (ast != null) 
 			{
-                ast.printMe();
+                // ast.printMe(); // Disabled - GraphViz output not needed
 				ast.semantMe();
 				/*************************/
 				/* [6a] Generate IR ... */
 				/*************************/
 				ast.irMe();
 				
+				/****************************************/
+				/* [6b] Perform Register Allocation ... */
+				/****************************************/
+				List<IrCommand> irCommands = Ir.getInstance().getAllCommands();
+				RegisterAllocator allocator = new RegisterAllocator(irCommands);
+				
+				if (!allocator.allocate()) {
+					// Register allocation failed - need spilling
+					fileWriter.print("Register Allocation Failed");
+					fileWriter.close();
+					return;
+				}
+				
 				/**************************************/
 				/* [7] Emit MIPS Assembly Instructions */
 				/**************************************/
 				MipsGenerator.getInstance(outputFileName).printDotDataString();
 				
-				for (IrCommand cmd : Ir.getInstance().getAllCommands()) {
+				// Analyze functions to determine prologue/epilogue needs
+				java.util.Map<String, mips.FunctionInfo> functionInfo = mips.FunctionInfo.analyzeFunctions(irCommands);
+				MipsGenerator.getInstance(outputFileName).setFunctionInfo(functionInfo);
+				
+				for (IrCommand cmd : irCommands) {
 					cmd.mipsMe();
 				}
 				
-				MipsGenerator.getInstance(outputFileName).printDotTextString();
-            }
+				MipsGenerator.getInstance(outputFileName).printDotTextString();			
+			/****************************/
+			/* [8] Finalize MIPS file  */
+			/****************************/
+			MipsGenerator.getInstance(outputFileName).finalizeFile();            }
 
 			/*************************/
 			/* [9] Close output file */

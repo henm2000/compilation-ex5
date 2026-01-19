@@ -101,7 +101,7 @@ public class SymbolTable
 		/**************************/
 		/* [6] Print Symbol Table */
 		/**************************/
-		printMe();
+		// printMe(); // Disabled - GraphViz output not needed
 	}
 
 	/***********************************************/
@@ -222,7 +222,7 @@ public class SymbolTable
 		/*********************************************/
 		/* Print the symbol table after every change */
 		/*********************************************/
-		printMe();
+		// printMe(); // Disabled - GraphViz output not needed
 	}
 
 	/********************************************************************************/
@@ -250,7 +250,7 @@ public class SymbolTable
 	/*********************************************/
 	/* Print the symbol table after every change */		
 	/*********************************************/
-	printMe();
+	// printMe(); // Disabled - GraphViz output not needed
 	}
 	
 	/***********************************************/

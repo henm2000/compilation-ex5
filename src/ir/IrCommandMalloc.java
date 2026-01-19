@@ -19,8 +19,8 @@ import temp.*;
  */
 public class IrCommandMalloc extends IrCommand
 {
-	Temp dst;
-	Temp size;
+	public Temp dst;
+	public Temp size;
 	
 	public IrCommandMalloc(Temp dst, Temp size)
 	{

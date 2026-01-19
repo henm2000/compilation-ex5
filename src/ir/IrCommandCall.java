@@ -33,7 +33,23 @@ public class IrCommandCall extends IrCommand
 
 	public void mipsMe()
 	{
-		// TODO: Implement MIPS generation
+		// Handle special built-in functions
+		if (funcName.equals("Label_PrintInt") && args.size() == 1) {
+			// Use the printInt helper
+			mips.MipsGenerator.getInstance().printInt(args.get(0));
+		} else {
+			// User-defined function call
+			// Push arguments onto stack in RIGHT-TO-LEFT order (so first arg is at top)
+			for (int i = args.size() - 1; i >= 0; i--) {
+				mips.MipsGenerator.getInstance().pushArg(args.get(i));
+			}
+			
+			// Call the function
+			mips.MipsGenerator.getInstance().call(dst, funcName);
+			
+			// Pop arguments from stack
+			mips.MipsGenerator.getInstance().popArgs(args.size());
+		}
 	}
 }
 

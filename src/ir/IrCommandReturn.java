@@ -28,7 +28,10 @@ public class IrCommandReturn extends IrCommand
 
 	public void mipsMe()
 	{
-		// TODO: Implement MIPS generation
+		// Move return value to $v0 if non-void
+		if (returnValue != null) {
+			mips.MipsGenerator.getInstance().returnValue(returnValue);
+		}
+		// Note: Function epilogue will be generated separately to restore registers and jr $ra
 	}
 }
-
