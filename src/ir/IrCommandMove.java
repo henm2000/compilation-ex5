@@ -11,6 +11,7 @@ package ir;
 /* PROJECT IMPORTS */
 /*******************/
 import temp.*;
+import mips.*;
 
 /**
  * Move/copy value from one temp to another
@@ -29,7 +30,7 @@ public class IrCommandMove extends IrCommand
 
 	public void mipsMe()
 	{
-		// TODO: Implement MIPS generation
+		MipsGenerator.getInstance().move(dst, src);
 	}
 }
 

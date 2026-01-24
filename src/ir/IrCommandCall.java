@@ -37,6 +37,13 @@ public class IrCommandCall extends IrCommand
 		if (funcName.equals("Label_PrintInt") && args.size() == 1) {
 			// Use the printInt helper
 			mips.MipsGenerator.getInstance().printInt(args.get(0));
+		} else if (funcName.equals("Label_PrintString") && args.size() == 1) {
+			// Use the printString helper
+			mips.MipsGenerator gen = mips.MipsGenerator.getInstance();
+			String regStr = gen.tempToReg(args.get(0));
+			gen.fileWriter.format("\tmove $a0,%s\n", regStr);
+			gen.fileWriter.format("\tli $v0,4\n");
+			gen.fileWriter.format("\tsyscall\n");
 		} else {
 			// User-defined function call
 			// Push arguments onto stack in RIGHT-TO-LEFT order (so first arg is at top)

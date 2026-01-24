@@ -173,6 +173,22 @@ public class AstVarField extends AstVar
 	public Temp irMe()
 	{
 		Temp t = var.irMe();
-		return t;
+		
+		// Calculate offset of the field
+		// We need the type class of the variable holding the field
+		if (var.type == null || !var.type.isClass()) {
+			return null; // Should not happen after semantic analysis
+		}
+		
+		// Use TypeClass.getFieldOffset which correctly handles hierarchy and sizes
+		int offset = ((TypeClass)var.type).getFieldOffset(fieldName);
+		
+		// Create result temp
+		Temp t_result = TempFactory.getInstance().getFreshTemp();
+		
+		// Load from memory: t_result = Mem[t + offset]
+		Ir.getInstance().AddIrCommand(new IrCommandLoadMemory(t_result, t, offset));
+		
+		return t_result;
 	}
 }

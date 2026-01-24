@@ -59,7 +59,8 @@ public class AstExpVar extends AstExp
 	}
 	public Type semantMe()
 	{
-		return var.semantMe();
+		this.type = var.semantMe();
+		return this.type;
 	}
 
 	public Temp irMe()

@@ -17,7 +17,7 @@ public class Main
 		Symbol s;
 		AstProgram  ast;
 		FileReader fileReader=null;
-		PrintWriter fileWriter=null;
+		PrintWriter fileWriter=null;  // Only used for error output
 		String inputFileName = argv[0];
 		String outputFileName = argv[1];
 		
@@ -28,11 +28,6 @@ public class Main
 			/********************************/
 			fileReader = new FileReader(inputFileName);
 
-			/********************************/
-			/* [2] Initialize a file writer */
-			/********************************/
-			fileWriter = new PrintWriter(outputFileName);
-			
 			/******************************/
 			/* [3] Initialize a new lexer */
 			/******************************/
@@ -68,34 +63,44 @@ public class Main
 				
 				if (!allocator.allocate()) {
 					// Register allocation failed - need spilling
-					fileWriter.print("Register Allocation Failed");
-					fileWriter.close();
+					try {
+						fileWriter = new PrintWriter(outputFileName);
+						fileWriter.print("Register Allocation Failed");
+						fileWriter.close();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 					return;
 				}
 				
 				/**************************************/
 				/* [7] Emit MIPS Assembly Instructions */
 				/**************************************/
+				// Start .data section with error messages
 				MipsGenerator.getInstance(outputFileName).printDotDataString();
 				
 				// Analyze functions to determine prologue/epilogue needs
 				java.util.Map<String, mips.FunctionInfo> functionInfo = mips.FunctionInfo.analyzeFunctions(irCommands);
 				MipsGenerator.getInstance(outputFileName).setFunctionInfo(functionInfo);
 				
+				// Execute IR commands 
+				// Global allocations and string constants will add to .data
+				// When main label is reached, label() will:
+				//   1. Call finalizeDataSection() to print strings/globals
+				//   2. Print .text
+				//   3. Execute initialization code (la for strings, sw for globals)
+				//   4. Print main:
+				// Then rest of code will write to .text section
 				for (IrCommand cmd : irCommands) {
 					cmd.mipsMe();
 				}
 				
-				MipsGenerator.getInstance(outputFileName).printDotTextString();			
 			/****************************/
 			/* [8] Finalize MIPS file  */
 			/****************************/
 			MipsGenerator.getInstance(outputFileName).finalizeFile();            }
 
-			/*************************/
-			/* [9] Close output file */
-			/*************************/
-			fileWriter.close();
+			// No need to close fileWriter - MipsGenerator handles its own file
 			
 			/*************************************/
 			/* [10] Finalize AST GRAPHIZ DOT file */

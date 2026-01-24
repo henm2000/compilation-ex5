@@ -35,8 +35,6 @@ public class AstVarSimple extends AstVar
 	}
 
 	/**************************************************/
-	/* The printing message for a simple var AST node */
-	/**************************************************/
 	public void printMe()
 	{
 		/**********************************/
@@ -51,6 +49,9 @@ public class AstVarSimple extends AstVar
 				serialNumber,
 			String.format("SIMPLE\nVAR\n(%s)",name));
 	}
+
+    public boolean isField = false;
+
 	public Type semantMe()
 	{
 		/************************************************/
@@ -61,6 +62,34 @@ public class AstVarSimple extends AstVar
 		if (result == null) {
 			throw new SemanticErrorException(line);
 		}
+		
+		// Determine if it is a field
+        isField = false;
+        TypeClass currentClass = SymbolTable.getInstance().getCurrentClass();
+        if (currentClass != null) {
+             // 1. Check if name is defined in class hierarchy
+            TypeClass cls = currentClass;
+            while (cls != null) {
+                for (TypeList it = cls.dataMembers; it != null; it = it.tail) {
+                    if (it.head != null && it.head.name != null && it.head.name.equals(name)) {
+                        isField = true;
+                        break;
+                    }
+                }
+                if (isField) break;
+                cls = cls.father;
+            }
+            
+            // 2. Robustness check: if not found in hierarchy (maybe wrapper issue?),
+            // but not found in local/global scope either, it must be a field.
+            if (!isField) {
+                 if (SymbolTable.getInstance().find(name) == null) {
+                     isField = true;
+                 }
+            }
+        }
+		
+		/*********************************************/
 		
 		/*********************************************/
 		/* Store the type for use in irMe() */
@@ -73,7 +102,25 @@ public class AstVarSimple extends AstVar
 	public Temp irMe()
 	{
 		Temp t = TempFactory.getInstance().getFreshTemp();
-		Ir.getInstance().AddIrCommand(new IrCommandLoad(t,name));
+        
+        if (isField) {
+             // It's a field access (implicit 'this')
+             // 1. Load 'this'
+             Temp t_this = TempFactory.getInstance().getFreshTemp();
+             Ir.getInstance().AddIrCommand(new IrCommandLoad(t_this, "this"));
+             
+             // 2. Calculate offset
+             TypeClass cls = SymbolTable.getInstance().getCurrentClass();
+             int offset = 0;
+             if (cls != null) {
+                 offset = cls.getFieldOffset(name);
+             }
+             
+             // 3. Load from memory
+             Ir.getInstance().AddIrCommand(new IrCommandLoadMemory(t, t_this, offset));
+        } else {
+		     Ir.getInstance().AddIrCommand(new IrCommandLoad(t,name));
+        }
 		return t;
 	}
 }

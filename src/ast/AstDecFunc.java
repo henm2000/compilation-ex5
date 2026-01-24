@@ -313,7 +313,42 @@ public class AstDecFunc extends AstDec
 		// Use actual function name instead of hardcoded "main"
 		String funcLabel = "Label_" + name;
 		Ir.getInstance().AddIrCommand(new IrCommandLabel(funcLabel));
+		
+		// Mark that we're entering a function (or main)
+		if (name.equals("main")) {
+			Ir.getInstance().enterMain();
+		} else {
+			Ir.getInstance().enterFunction();
+		}
+		
+		// Set return type for return statements (cleared after semantMe)
+		// Get the function type from symbol table
+		Type funcType = SymbolTable.getInstance().find(name);
+		if (funcType instanceof TypeFunction) {
+			TypeFunction tf = (TypeFunction) funcType;
+			SymbolTable.getInstance().setReturnType(tf.returnType);
+		}
+		
+		// Check if we are inside a class (method definition)
+		// If so, we need to accept 'this' as the first parameter
+		if (SymbolTable.getInstance().getCurrentClass() != null) {
+			Ir.getInstance().AddIrCommand(new IrCommandAllocate("this", "parameter"));
+		}
+
+		// Allocate parameters in reverse order (they're pushed right-to-left)
+		if (params != null) {
+			for (AstParam param : params) {
+				Ir.getInstance().AddIrCommand(new IrCommandAllocate(param.id, "parameter"));
+			}
+		}
+		
 		if (body != null) body.irMe();
+		
+		// Clear return type
+		SymbolTable.getInstance().clearReturnType();
+		
+		// Mark that we're exiting the function
+		Ir.getInstance().exitFunction();
 
 		return null;
 	}

@@ -29,21 +29,18 @@ public class AstExpString extends AstExp
 
 	public Temp irMe()
 	{
-		// For now, strings are represented as their address
-		// In a full implementation, strings would be stored in data section
-		// For IR generation, we'll create a temp and note the string value
-		// The MIPS generator will handle string storage
+		// Create a temp to hold the string address
 		Temp t = TempFactory.getInstance().getFreshTemp();
 		
-		// Note: String handling in IR is simplified
-		// The actual string storage will be handled in MIPS generation phase
-		// For now, we can use a placeholder or store the string address
-		// Since we don't have a string constant IR command, we'll use a simple approach:
-		// Store 0 as placeholder (MIPS generator will replace with actual string address)
-		Ir.getInstance().AddIrCommand(new IRcommandConstInt(t, 0));
+		// Strip surrounding quotes from the string literal
+		String actualValue = value;
+		if (actualValue.startsWith("\"") && actualValue.endsWith("\"")) {
+			actualValue = actualValue.substring(1, actualValue.length() - 1);
+		}
 		
-		// TODO: In MIPS phase, strings should be stored in .data section
-		// and this temp should contain the address of the string
+		// Use IrCommandConstString to load the string address
+		// This will add the string to .data section and load its address
+		Ir.getInstance().AddIrCommand(new IrCommandConstString(t, actualValue));
 		
 		return t;
 	}

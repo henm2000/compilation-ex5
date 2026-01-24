@@ -135,19 +135,15 @@ public class AstVarSubscript extends AstVar
 		// Get the index value
 		Temp t_index = subscript.irMe();
 		
-		// Calculate offset: index * 4 (each element is 4 bytes)
-		Temp t_offset = TempFactory.getInstance().getFreshTemp();
-		Temp t_const4 = TempFactory.getInstance().getFreshTemp();
-		Ir.getInstance().AddIrCommand(new IRcommandConstInt(t_const4, 4));
-		Ir.getInstance().AddIrCommand(new IrCommandBinopMulIntegers(t_offset, t_index, t_const4));
-		
-		// Calculate address: arr + offset
-		Temp t_addr = TempFactory.getInstance().getFreshTemp();
-		Ir.getInstance().AddIrCommand(new IrCommandBinopAddIntegers(t_addr, t_arr, t_offset));
-		
-		// Load from memory: t_result := Mem[t_addr + 0]
+		// Use IrCommandArrayLoad which includes bounds checking
+		// Array layout: [length | elem0 | elem1 | ...]
+		// This command will:
+		// 1. Check array != null
+		// 2. Check index >= 0
+		// 3. Check index < length (loaded from offset 0)
+		// 4. Load element at offset (index+1)*4
 		Temp t_result = TempFactory.getInstance().getFreshTemp();
-		Ir.getInstance().AddIrCommand(new IrCommandLoadMemory(t_result, t_addr, 0));
+		Ir.getInstance().AddIrCommand(new IrCommandArrayLoad(t_result, t_arr, t_index));
 		
 		return t_result;
 	}

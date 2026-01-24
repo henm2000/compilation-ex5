@@ -116,6 +116,18 @@ public class LivenessAnalyzer
 				if (binop.t2 != null) use.add(binop.t2);
 				if (binop.dst != null) def.add(binop.dst);
 			}
+			else if (cmd instanceof IrCommandBinopConcatStrings) {
+				IrCommandBinopConcatStrings binop = (IrCommandBinopConcatStrings) cmd;
+				if (binop.string1 != null) use.add(binop.string1);
+				if (binop.string2 != null) use.add(binop.string2);
+				if (binop.dst != null) def.add(binop.dst);
+			}
+			else if (cmd instanceof IrCommandBinopEqStrings) {
+				IrCommandBinopEqStrings binop = (IrCommandBinopEqStrings) cmd;
+				if (binop.string1 != null) use.add(binop.string1);
+				if (binop.string2 != null) use.add(binop.string2);
+				if (binop.dst != null) def.add(binop.dst);
+			}
 			else if (cmd instanceof IrCommandLoad) {
 				IrCommandLoad load = (IrCommandLoad) cmd;
 				// Load from variable to temp - defines the temp
@@ -185,6 +197,18 @@ public class LivenessAnalyzer
 				}
 				// If non-void return, defines dst temp
 				if (call.dst != null) def.add(call.dst);
+			}
+			else if (cmd instanceof IrCommandArrayLoad) {
+				IrCommandArrayLoad arrLoad = (IrCommandArrayLoad) cmd;
+				if (arrLoad.arrayPtr != null) use.add(arrLoad.arrayPtr);
+				if (arrLoad.index != null) use.add(arrLoad.index);
+				if (arrLoad.dst != null) def.add(arrLoad.dst);
+			}
+			else if (cmd instanceof IrCommandArrayStore) {
+				IrCommandArrayStore arrStore = (IrCommandArrayStore) cmd;
+				if (arrStore.arrayPtr != null) use.add(arrStore.arrayPtr);
+				if (arrStore.index != null) use.add(arrStore.index);
+				if (arrStore.src != null) use.add(arrStore.src);
 			}
 			// Labels, jumps, allocate don't use/def temps
 			
@@ -313,6 +337,16 @@ public class LivenessAnalyzer
 	/* Public interface                        */
 	/******************************************/
 	
+	public Set<Temp> getDefTempsAtCommand(IrCommand cmd)
+	{
+		return defSets.getOrDefault(cmd, new HashSet<>());
+	}
+	
+	public Set<Temp> getUseTempsAtCommand(IrCommand cmd)
+	{
+		return useSets.getOrDefault(cmd, new HashSet<>());
+	}	
+
 	/**
 	 * Get temps live AFTER a command executes.
 	 */

@@ -15,6 +15,8 @@ public class Ir
 {
 	private IrCommand head=null;
 	private IrCommandList tail=null;
+	private boolean inFunction = false; // Track if we're in a function during IR generation
+	private boolean inMain = false; // Track if we're in main function
 
 	/******************/
 	/* Add Ir command */
@@ -63,6 +65,36 @@ public class Ir
 			instance = new Ir();
 		}
 		return instance;
+	}
+	
+	/*****************************/
+	/* Function scope tracking   */
+	/*****************************/
+	public void enterFunction()
+	{
+		inFunction = true;
+	}
+	
+	public void exitFunction()
+	{
+		inFunction = false;
+		inMain = false;
+	}
+	
+	public void enterMain()
+	{
+		inMain = true;
+		inFunction = false; // main doesn't have frame pointer
+	}
+	
+	public boolean isInFunction()
+	{
+		return inFunction && !inMain;
+	}
+	
+	public boolean isInMain()
+	{
+		return inMain;
 	}
 
 	/******************************/

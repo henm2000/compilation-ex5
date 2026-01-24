@@ -1,5 +1,6 @@
 package ast;
-
+import ir.*;
+import temp.*;
 import java.util.List;
 import java.util.HashMap;
 import types.*;
@@ -252,5 +253,61 @@ public class AstDecClass extends AstDec
         /* [9] Return value is irrelevant for class declarations */
         /*********************************************************/
         return null;		
+    }
+
+    public Temp irMe()
+    {
+        // Get the class type to access member information
+        Type t = SymbolTable.getInstance().findTypeDefinition(name);
+        TypeClass typeClass = null;
+        if (t instanceof TypeClass) {
+            typeClass = (TypeClass) t;
+        }
+        
+        // Set current class for method generation
+        SymbolTable.getInstance().setCurrentClass(typeClass);
+
+        if (fields != null) {
+            for (AstDec f : fields) {
+                if (f instanceof AstDecFunc) {
+                    AstDecFunc func = (AstDecFunc) f;
+                    
+                    // We need to ensure AstDecFunc.irMe can find the return type in the SymbolTable
+                    // The function is currently known by 'originalName' inside the class scope (which is closed)
+                    String originalName = func.name;
+                    String mangledName = this.name + "_" + originalName;
+                    
+                    TypeFunction funcType = null;
+
+                    // Retrieve the function signature from the TypeClass structure
+                    if (typeClass != null && typeClass.dataMembers != null) {
+                         for (TypeList it = typeClass.dataMembers; it != null; it = it.tail) {
+                             if (it.head instanceof TypeFunction && it.head.name.equals(originalName)) {
+                                 funcType = (TypeFunction) it.head;
+                                 break;
+                             }
+                         }
+                    }
+
+                    if (funcType != null) {
+                        SymbolTable.getInstance().enter(mangledName, funcType);
+                    }
+                    
+                    // Temporarily rename the function so irMe generates Label_ClassName_MethodName
+                    func.name = mangledName;
+                    
+                    // Generate IR for the method
+                    func.irMe();
+                    
+                    // Restore original state name
+                    func.name = originalName;
+                }
+            }
+        }
+        
+        // Clear current class
+        SymbolTable.getInstance().clearCurrentClass();
+        
+        return null;
     }
 }

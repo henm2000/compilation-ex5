@@ -174,31 +174,77 @@ public class AstExpCall extends AstExp
 
 	public Temp irMe()
 	{
-		// Generate IR for all arguments
+		// 1. Determine if this is a method call (needs 'this' injection) and label resolution
+		String funcLabel = null;
+		TypeClass startClass = null;
+		boolean isMethodCall = false;
+
+		if (receiver != null) {
+			// Explicit receiver: receiver.method()
+			Type receiverType = receiver.type; 
+			if (receiverType != null && receiverType.isClass()) {
+				startClass = (TypeClass) receiverType;
+				isMethodCall = true; // Calling on a class object implies method
+			}
+		} else {
+			// Implicit 'this' or global function
+			startClass = SymbolTable.getInstance().getCurrentClass();
+		}
+		
+		// Search for method definition in hierarchy
+		if (startClass != null) {
+             TypeClass curr = startClass;
+             TypeClass definingClass = null;
+             
+             while (curr != null) {
+                if (curr.dataMembers != null) {
+                    for (TypeList it = curr.dataMembers; it != null; it = it.tail) {
+                         if (it.head instanceof TypeFunction && it.head.name.equals(methodName)) {
+                             definingClass = curr;
+                             break;
+                         }
+                    }
+                }
+                if (definingClass != null) break;
+                curr = curr.father;
+             }
+             
+             if (definingClass != null) {
+                 funcLabel = "Label_" + definingClass.name + "_" + methodName;
+                 if (receiver == null) {
+                     // Found method in current class hierarchy -> implicit this
+                     isMethodCall = true; 
+                 }
+             }
+        }
+        
+        if (funcLabel == null) {
+			// Fallback to global
+			funcLabel = "Label_" + methodName;
+			// isMethodCall remains false (global function)
+		}
+
+		// 2. Generate argument temps
 		java.util.List<Temp> argTemps = new java.util.ArrayList<Temp>();
+		
+		// If method call, pass 'this' as first argument
+		if (isMethodCall) {
+		    if (receiver != null) {
+		        argTemps.add(receiver.irMe());
+		    } else {
+		        // Implicit this - load "this" parameter
+		        Temp t_this = TempFactory.getInstance().getFreshTemp();
+		        Ir.getInstance().AddIrCommand(new IrCommandLoad(t_this, "this"));
+		        argTemps.add(t_this);
+		    }
+		}
+		
+		// Add explicit arguments
 		if (args != null) {
 			for (AstExp arg : args) {
 				Temp t_arg = arg.irMe();
 				argTemps.add(t_arg);
 			}
-		}
-		
-		// Determine the function name
-		String funcLabel;
-		if (receiver != null) {
-			// Method call: receiver.methodName()
-			// For now, we'll use a simple naming convention
-			// In a full implementation, you might need to handle method dispatch
-			Type receiverType = receiver.type; // Use stored type
-			if (receiverType != null && receiverType.isClass()) {
-				TypeClass cls = (TypeClass) receiverType;
-				funcLabel = "Label_" + cls.name + "_" + methodName;
-			} else {
-				funcLabel = "Label_" + methodName;
-			}
-		} else {
-			// Direct function call
-			funcLabel = "Label_" + methodName;
 		}
 		
 		// Get the return type to determine if we need a result temp (use stored type)

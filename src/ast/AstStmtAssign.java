@@ -2,6 +2,7 @@ package ast;
 import temp.*;
 import ir.*;
 import types.*;
+import symboltable.SymbolTable;
 
 import types.*;
 import exceptions.SemanticErrorException;
@@ -127,14 +128,33 @@ public class AstStmtAssign extends AstStmt
 
 	public Temp irMe()
 	{
-		// Generate IR for the expression being assigned
-		Temp src = exp.irMe();
-		
 		// Handle different variable types
 		if (var instanceof AstVarSimple) {
 			// Simple variable: x := exp
 			AstVarSimple simpleVar = (AstVarSimple) var;
-			Ir.getInstance().AddIrCommand(new IrCommandStore(simpleVar.name, src));
+			
+			if (simpleVar.isField) {
+			    // It is a field assignment: this.x := exp
+			    Temp t_this = TempFactory.getInstance().getFreshTemp();
+			    Ir.getInstance().AddIrCommand(new IrCommandLoad(t_this, "this"));
+			    
+                // RHS evaluation
+			    Temp src = exp.irMe();
+
+			    // Calculate offset
+			    int offset = 0;
+			    TypeClass currentClass = SymbolTable.getInstance().getCurrentClass();
+                if (currentClass != null) {
+                    offset = currentClass.getFieldOffset(simpleVar.name);
+                }
+                
+                // Store to memory
+                Ir.getInstance().AddIrCommand(new IrCommandStoreMemory(t_this, offset, src));
+			    
+			} else {
+                Temp src = exp.irMe();
+    			Ir.getInstance().AddIrCommand(new IrCommandStore(simpleVar.name, src));
+			}
 		}
 		else if (var instanceof AstVarField) {
 			// Class field: obj.field := exp
@@ -143,11 +163,14 @@ public class AstStmtAssign extends AstStmt
 			// Get the object address
 			Temp t_obj = fieldVar.var.irMe();
 			
+            // RHS evaluation
+		    Temp src = exp.irMe();
+
 			// Get the class type to calculate offset (use stored type)
 			Type varType = fieldVar.var.type;
 			if (varType != null && varType.isClass()) {
 				TypeClass cls = (TypeClass) varType;
-				int offset = getFieldOffset(cls, fieldVar.fieldName);
+				int offset = cls.getFieldOffset(fieldVar.fieldName);
 				
 				// Store to memory: Mem[t_obj + offset] := src
 				Ir.getInstance().AddIrCommand(new IrCommandStoreMemory(t_obj, offset, src));
@@ -163,18 +186,17 @@ public class AstStmtAssign extends AstStmt
 			// Get the index value
 			Temp t_index = subscriptVar.subscript.irMe();
 			
-			// Calculate offset: index * 4
-			Temp t_offset = TempFactory.getInstance().getFreshTemp();
-			Temp t_const4 = TempFactory.getInstance().getFreshTemp();
-			Ir.getInstance().AddIrCommand(new IRcommandConstInt(t_const4, 4));
-			Ir.getInstance().AddIrCommand(new IrCommandBinopMulIntegers(t_offset, t_index, t_const4));
-			
-			// Calculate address: arr + offset
-			Temp t_addr = TempFactory.getInstance().getFreshTemp();
-			Ir.getInstance().AddIrCommand(new IrCommandBinopAddIntegers(t_addr, t_arr, t_offset));
-			
-			// Store to memory: Mem[t_addr + 0] := src
-			Ir.getInstance().AddIrCommand(new IrCommandStoreMemory(t_addr, 0, src));
+            // RHS evaluation
+		    Temp src = exp.irMe();
+
+			// Use IrCommandArrayStore which includes bounds checking
+			// Array layout: [length | elem0 | elem1 | ...]
+			// This command will:
+			// 1. Check array != null
+			// 2. Check index >= 0
+			// 3. Check index < length (loaded from offset 0)
+			// 4. Store to element at offset (index+1)*4
+			Ir.getInstance().AddIrCommand(new IrCommandArrayStore(t_arr, t_index, src));
 		}
 		return null;
 	}

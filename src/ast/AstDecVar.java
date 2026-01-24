@@ -93,7 +93,13 @@ public class AstDecVar extends AstDec
 
 	public Temp irMe()
 	{
-		Ir.getInstance().AddIrCommand(new IrCommandAllocate(id));
+		// Determine scope: global if not in function, local otherwise
+		String scope = "global";
+		if (Ir.getInstance().isInFunction()) {
+			scope = "local";
+		}
+		
+		Ir.getInstance().AddIrCommand(new IrCommandAllocate(id, scope));
 
 		if (init != null)
 		{

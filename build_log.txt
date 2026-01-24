@@ -1,0 +1,53 @@
+clear
+[H[2J[3J*******************************
+*                             *
+*                             *
+* [0] Remove COMPILER program *
+*                             *
+*                             *
+*******************************
+rm -rf COMPILER
+
+
+************************************************************
+*                                                          *
+*                                                          *
+* [1] Remove *.class files and JFlex-CUP generated files:  *
+*                                                          *
+*     Lexer.java                                           *
+*     Parser.java                                          *
+*     TokenNames.java                                      *
+*                                                          *
+************************************************************
+rm -rf /specific/a/home/cc/students/cs/chenmizrahi2/compilation/ex5/src/Lexer.java /specific/a/home/cc/students/cs/chenmizrahi2/compilation/ex5/src/Parser.java /specific/a/home/cc/students/cs/chenmizrahi2/compilation/ex5/src/TokenNames.java /specific/a/home/cc/students/cs/chenmizrahi2/compilation/ex5/bin/*.class /specific/a/home/cc/students/cs/chenmizrahi2/compilation/ex5/bin/*/*.class
+
+
+************************************************************
+*                                                          *
+*                                                          *
+* [2] Use JFlex to synthesize Lexer.java from LEX_FILE.lex *
+*                                                          *
+*                                                          *
+************************************************************
+jflex -q -d /specific/a/home/cc/students/cs/chenmizrahi2/compilation/ex5/src /specific/a/home/cc/students/cs/chenmizrahi2/compilation/ex5/jflex/LEX_FILE.lex
+
+
+*******************************************************************************
+*                                                                             *
+*                                                                             *
+* [3] Use CUP to synthesize Parser.java and TokenNames.java from CUP_FILE.cup *
+*                                                                             *
+*                                                                             *
+*******************************************************************************
+java -jar /specific/a/home/cc/students/cs/chenmizrahi2/compilation/ex5/external_jars/java-cup-11b.jar -nowarn -parser  Parser -symbols TokenNames -destdir /specific/a/home/cc/students/cs/chenmizrahi2/compilation/ex5/src /specific/a/home/cc/students/cs/chenmizrahi2/compilation/ex5/cup/CUP_FILE.cup
+
+
+********************************************************
+*                                                      *
+*                                                      *
+* [4] Create *.class files from *.java files + CUP JAR *
+*                                                      *
+*                                                      *
+********************************************************
+mkdir -p /specific/a/home/cc/students/cs/chenmizrahi2/compilation/ex5/bin
+javac -cp /specific/a/home/cc/students/cs/chenmizrahi2/compilation/ex5/external_jars/java-cup-11b-runtime.jar -d /specific/a/home/cc/students/cs/chenmizrahi2/compilation/ex5/bin /specific/a/home/cc/students/cs/chenmizrahi2/compilation/ex5/src/*.java /specific/a/home/cc/students/cs/chenmizrahi2/compilation/ex5/src/*/*.java

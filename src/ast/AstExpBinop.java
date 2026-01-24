@@ -108,7 +108,8 @@ public class AstExpBinop extends AstExp
         // Handle equality operator (=)
         if (this.op == 6) {
             if (areTypesComparableForEquality(t1, t2)) {
-                return TypeInt.getInstance(); // Equality returns int
+                this.type = TypeInt.getInstance(); // Equality returns int
+                return this.type;
             } else {
                 throw new SemanticErrorException(this.line);
             }
@@ -118,11 +119,13 @@ public class AstExpBinop extends AstExp
         if (this.op == 0) {
             // String concatenation
             if (t1 == TypeString.getInstance() && t2 == TypeString.getInstance()) {
-                return TypeString.getInstance();
+                this.type = TypeString.getInstance();
+                return this.type;
             }
             // Integer addition
             if (t1 == TypeInt.getInstance() && t2 == TypeInt.getInstance()) {
-                return TypeInt.getInstance();
+                this.type = TypeInt.getInstance();
+                return this.type;
             }
             throw new SemanticErrorException(this.line);
         }
@@ -134,7 +137,8 @@ public class AstExpBinop extends AstExp
                 if (this.op == 3) { // DIVIDE
                     checkDivisionByZero(right);
                 }
-                return TypeInt.getInstance();
+                this.type = TypeInt.getInstance();
+                return this.type;
             }
             throw new SemanticErrorException(this.line);
         }
@@ -227,9 +231,16 @@ public class AstExpBinop extends AstExp
 		 * 5 -> GT
 		 * 6 -> EQ
 		 */
+		
 		if (op == 0)  // PLUS
 		{
-			Ir.getInstance().AddIrCommand(new IrCommandBinopAddIntegers(dst,t1,t2));
+			// Check result type to distinguish string concat from int add
+			if (this.type == TypeString.getInstance()) {
+				Ir.getInstance().AddIrCommand(new IrCommandBinopConcatStrings(dst,t1,t2));
+			} else {
+				// Integer addition
+				Ir.getInstance().AddIrCommand(new IrCommandBinopAddIntegers(dst,t1,t2));
+			}
 		}
 		else if (op == 1)  // MINUS
 		{
@@ -253,7 +264,14 @@ public class AstExpBinop extends AstExp
 		}
 		else if (op == 6)  // EQ
 		{
-			Ir.getInstance().AddIrCommand(new IrCommandBinopEqIntegers(dst,t1,t2));
+			// Check operand types to distinguish string equality from int/pointer equality
+			Type leftType = (left != null) ? left.type : null;
+			if (leftType == TypeString.getInstance()) {
+				Ir.getInstance().AddIrCommand(new IrCommandBinopEqStrings(dst,t1,t2));
+			} else {
+				// Integer/pointer equality
+				Ir.getInstance().AddIrCommand(new IrCommandBinopEqIntegers(dst,t1,t2));
+			}
 		}
 		
 		return dst;

@@ -11,6 +11,7 @@ package ir;
 /* PROJECT IMPORTS */
 /*******************/
 import temp.*;
+import mips.*;
 
 /**
  * Binary operation: division of integers
@@ -32,8 +33,7 @@ public class IrCommandBinopDivIntegers extends IrCommand
 
 	public void mipsMe()
 	{
-		// TODO: Implement MIPS generation
-		// MipsGenerator.getInstance().div(dst, t1, t2);
+		mips.MipsGenerator.getInstance().div(dst, t1, t2);
 	}
 }
 

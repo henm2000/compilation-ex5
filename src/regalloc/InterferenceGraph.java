@@ -58,6 +58,16 @@ public class InterferenceGraph
 		
 		for (IrCommand cmd : irCommands)
 		{
+			// Add all defined temps to the graph
+			for (Temp t : liveness.getDefTempsAtCommand(cmd)) {
+				addNode(t);
+			}
+
+			// Add all used temps to the graph
+			for (Temp t : liveness.getUseTempsAtCommand(cmd)) {
+				addNode(t);
+			}
+
 			// Get all temps live AFTER this command
 			Set<Temp> liveTemps = liveness.getLiveTempsAtCommand(cmd);
 			

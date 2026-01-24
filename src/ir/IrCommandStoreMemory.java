@@ -11,6 +11,7 @@ package ir;
 /* PROJECT IMPORTS */
 /*******************/
 import temp.*;
+import mips.*;
 
 /**
  * Store to memory at address + offset
@@ -32,7 +33,7 @@ public class IrCommandStoreMemory extends IrCommand
 
 	public void mipsMe()
 	{
-		// TODO: Implement MIPS generation
+		mips.MipsGenerator.getInstance().storeMemory(address, offset, src);
 	}
 }
 

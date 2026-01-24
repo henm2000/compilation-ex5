@@ -66,9 +66,12 @@ public class FunctionInfo
 					String funcName = labelName.equals("main") ? "main" : 
 					                  labelName.substring(6); // Remove "Label_" prefix
 					
-					// Only track user-defined functions (not loop labels)
-					// Function labels don't have numbers in them (Label_1, Label_2 are loop labels)
-					if (labelName.equals("main") || (!funcName.matches(".*\\d+.*"))) {
+					// Check if it's an auto-generated loop label (e.g., Label_1_start)
+					// Format: Label_DIGITS_...
+					boolean isAutoLabel = labelName.matches("Label_\\d+_.*");
+					
+					// If it's main or NOT an auto-generated loop label, treat it as a function
+					if (labelName.equals("main") || !isAutoLabel) {
 						currentFunc = new FunctionInfo(labelName);
 						currentFunc.startIndex = i;
 						functions.put(labelName, currentFunc);

@@ -152,16 +152,28 @@ public class AstExpNew extends AstExp
 			}
 		} else {
 			// Array allocation: new Type[size]
-			// Calculate size: sizeExpr * 4 (each element is 4 bytes)
-			Temp t_sizeExpr = sizeExpr.irMe();
-			Temp t_const4 = TempFactory.getInstance().getFreshTemp();
-			Temp t_arraySize = TempFactory.getInstance().getFreshTemp();
+			// Array layout: [length | elem0 | elem1 | elem2 | ...]
+			// Array pointer points TO the length field
 			
+			Temp t_sizeExpr = sizeExpr.irMe();
+			
+			// Calculate total size: (size + 1) * 4 
+			// +1 for length field at offset 0
+			Temp t_const1 = TempFactory.getInstance().getFreshTemp();
+			Temp t_sizeplus1 = TempFactory.getInstance().getFreshTemp();
+			Temp t_const4 = TempFactory.getInstance().getFreshTemp();
+			Temp t_totalBytes = TempFactory.getInstance().getFreshTemp();
+			
+			Ir.getInstance().AddIrCommand(new IRcommandConstInt(t_const1, 1));
+			Ir.getInstance().AddIrCommand(new IrCommandBinopAddIntegers(t_sizeplus1, t_sizeExpr, t_const1));
 			Ir.getInstance().AddIrCommand(new IRcommandConstInt(t_const4, 4));
-			Ir.getInstance().AddIrCommand(new IrCommandBinopMulIntegers(t_arraySize, t_sizeExpr, t_const4));
+			Ir.getInstance().AddIrCommand(new IrCommandBinopMulIntegers(t_totalBytes, t_sizeplus1, t_const4));
 			
 			// Allocate memory
-			Ir.getInstance().AddIrCommand(new IrCommandMalloc(result, t_arraySize));
+			Ir.getInstance().AddIrCommand(new IrCommandMalloc(result, t_totalBytes));
+			
+			// Store length at offset 0: Mem[result + 0] := size
+			Ir.getInstance().AddIrCommand(new IrCommandStoreMemory(result, 0, t_sizeExpr));
 		}
 		
 		return result;

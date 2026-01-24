@@ -11,6 +11,7 @@ package ir;
 /* PROJECT IMPORTS */
 /*******************/
 import temp.*;
+import mips.*;
 
 /**
  * Binary operation: greater than comparison of integers
@@ -32,8 +33,7 @@ public class IrCommandBinopGtIntegers extends IrCommand
 
 	public void mipsMe()
 	{
-		// TODO: Implement MIPS generation
-		// MipsGenerator.getInstance().gt(dst, t1, t2);
+		mips.MipsGenerator.getInstance().sgt(dst, t1, t2);
 	}
 }
 

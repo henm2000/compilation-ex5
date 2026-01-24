@@ -52,10 +52,14 @@ public class AstProgram extends AstNode
 				}
 			}
 			
-			// Second pass: Generate IR for functions
+			// Second pass: Generate IR for functions and classes
 			for (AstDec d : decls) {
-				if (d != null && d instanceof AstDecFunc) {
-					d.irMe();
+				if (d != null) {
+					if (d instanceof AstDecFunc) {
+						d.irMe();
+					} else if (d instanceof AstDecClass) {
+						d.irMe();
+					}
 				}
 			}
 		}

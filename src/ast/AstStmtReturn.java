@@ -97,6 +97,7 @@ public class AstStmtReturn extends AstStmt
 		
 		// Emit return command
 		Ir.getInstance().AddIrCommand(new IrCommandReturn(returnValue));
+		
 		return null;
 	}
 }

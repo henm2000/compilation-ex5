@@ -11,6 +11,7 @@ package ir;
 /* PROJECT IMPORTS */
 /*******************/
 import temp.*;
+import mips.*;
 
 /**
  * Allocate memory on the heap
@@ -30,7 +31,7 @@ public class IrCommandMalloc extends IrCommand
 
 	public void mipsMe()
 	{
-		// TODO: Implement MIPS generation
+		mips.MipsGenerator.getInstance().malloc(dst, size);
 	}
 }
 
