@@ -210,6 +210,33 @@ public class LivenessAnalyzer
 				if (arrStore.index != null) use.add(arrStore.index);
 				if (arrStore.src != null) use.add(arrStore.src);
 			}
+			else if (cmd instanceof IrCommandCallIndirect) {
+				IrCommandCallIndirect call = (IrCommandCallIndirect) cmd;
+				// Indirect function call uses object temp and all argument temps
+				if (call.objTemp != null) use.add(call.objTemp);
+				if (call.args != null) {
+					for (Temp arg : call.args) {
+						if (arg != null) use.add(arg);
+					}
+				}
+				// If non-void return, defines dst temp
+				if (call.dst != null) def.add(call.dst);
+			}
+			else if (cmd instanceof IrCommandConstString) {
+				IrCommandConstString constStr = (IrCommandConstString) cmd;
+				// Constant string defines dst temp
+				if (constStr.dst != null) def.add(constStr.dst);
+			}
+			else if (cmd instanceof IrCommandPrintString) {
+				IrCommandPrintString print = (IrCommandPrintString) cmd;
+				// PrintString uses the temp
+				if (print.str != null) use.add(print.str);
+			}
+			else if (cmd instanceof IrCommandLoadVtableAddr) {
+				IrCommandLoadVtableAddr loadVt = (IrCommandLoadVtableAddr) cmd;
+				// LoadVtableAddr defines dst temp
+				if (loadVt.dst != null) def.add(loadVt.dst);
+			}
 			// Labels, jumps, allocate don't use/def temps
 			
 			useSets.put(cmd, use);

@@ -31,7 +31,9 @@ public class IrCommandReturn extends IrCommand
 		// Move return value to $v0 if non-void
 		if (returnValue != null) {
 			mips.MipsGenerator.getInstance().returnValue(returnValue);
+		} else {
+			// Void return - still need to generate epilogue and return
+			mips.MipsGenerator.getInstance().returnVoid();
 		}
-		// Note: Function epilogue will be generated separately to restore registers and jr $ra
 	}
 }

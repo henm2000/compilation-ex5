@@ -112,11 +112,11 @@ public class AstExpNew extends AstExp
 
 	/**
 	 * Calculate the size of a class in bytes
-	 * Each field is 4 bytes
+	 * Each field is 4 bytes, plus 4 bytes for vtable pointer at offset 0
 	 */
 	private int getClassSize(TypeClass cls)
 	{
-		int size = 0;
+		int size = 4; // vtable pointer at offset 0
 		TypeClass current = cls;
 		
 		// Count all fields in the class hierarchy
@@ -149,6 +149,44 @@ public class AstExpNew extends AstExp
 				
 				// Allocate memory
 				Ir.getInstance().AddIrCommand(new IrCommandMalloc(result, t_size));
+				
+				// Store vtable pointer at offset 0
+				Temp t_vtable = TempFactory.getInstance().getFreshTemp();
+				Ir.getInstance().AddIrCommand(new IrCommandLoadVtableAddr(t_vtable, typeName));
+				Ir.getInstance().AddIrCommand(new IrCommandStoreMemory(result, 0, t_vtable));
+				
+				// Initialize fields with their initial values
+				// Traverse class hierarchy from root to this class
+				java.util.List<TypeClass> hierarchy = new java.util.ArrayList<TypeClass>();
+				TypeClass current = cls;
+				while (current != null) {
+					hierarchy.add(0, current); // Add at beginning to get root first
+					current = current.father;
+				}
+				
+				int offset = 4; // Start after vtable pointer
+				for (TypeClass clazz : hierarchy) {
+					// Get field declarations for this class
+					java.util.List<AstDecVar> fieldDecs = AstDecClass.classFieldDeclarations.get(clazz.name);
+					if (fieldDecs != null) {
+						for (AstDecVar fieldDec : fieldDecs) {
+							if (fieldDec.init != null) {
+								// Evaluate initializer expression
+								Temp initVal = fieldDec.init.irMe();
+								// Store at field offset
+								Ir.getInstance().AddIrCommand(new IrCommandStoreMemory(result, offset, initVal));
+							}
+							offset += 4;
+						}
+					} else {
+						// No field declarations found, but we may need to count fields from TypeList
+						for (TypeList it = clazz.dataMembers; it != null; it = it.tail) {
+							if (it.head instanceof TypeClassField) {
+								offset += 4;
+							}
+						}
+					}
+				}
 			}
 		} else {
 			// Array allocation: new Type[size]

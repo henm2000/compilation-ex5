@@ -2,6 +2,7 @@ package ast;
 import ir.*;
 import temp.*;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.HashMap;
 import types.*;
 import symboltable.SymbolTable;
@@ -13,6 +14,9 @@ public class AstDecClass extends AstDec
     public String extendsName; // may be null
     public List<AstDec> fields;
     public int line;
+    
+    // Static map to store field declarations for each class (for initialization in 'new')
+    public static HashMap<String, List<AstDecVar>> classFieldDeclarations = new HashMap<>();
 
     public AstDecClass(String name, String extendsName, List<AstDec> fields, int line)
     {
@@ -233,6 +237,18 @@ public class AstDecClass extends AstDec
         }
         t.dataMembers = dataMembers;
         
+        // Build the vtable for this class (must be after dataMembers is set)
+        t.buildVtable();
+        
+        // Store field declarations with initializers for use in 'new' expression
+        List<AstDecVar> fieldDecList = new ArrayList<>();
+        for (AstDec field : fields) {
+            if (field instanceof AstDecVar) {
+                fieldDecList.add((AstDecVar) field);
+            }
+        }
+        classFieldDeclarations.put(name, fieldDecList);
+        
         // PASS 2: Now semanticize method bodies (all fields and method signatures are available)
         for (AstDecFunc method : methodsToProcess) {
             method.semanticizeBody();
@@ -262,6 +278,11 @@ public class AstDecClass extends AstDec
         TypeClass typeClass = null;
         if (t instanceof TypeClass) {
             typeClass = (TypeClass) t;
+        }
+        
+        // Emit vtable for this class (even if empty, so the label exists)
+        if (typeClass != null && typeClass.vtable != null) {
+            mips.MipsGenerator.getInstance().emitVtable(name, typeClass.vtable);
         }
         
         // Set current class for method generation

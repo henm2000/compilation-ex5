@@ -178,6 +178,7 @@ public class AstExpCall extends AstExp
 		String funcLabel = null;
 		TypeClass startClass = null;
 		boolean isMethodCall = false;
+		boolean useVtable = false;  // Whether to use virtual dispatch
 
 		if (receiver != null) {
 			// Explicit receiver: receiver.method()
@@ -185,16 +186,17 @@ public class AstExpCall extends AstExp
 			if (receiverType != null && receiverType.isClass()) {
 				startClass = (TypeClass) receiverType;
 				isMethodCall = true; // Calling on a class object implies method
+				useVtable = true;    // Use virtual dispatch for explicit receiver
 			}
 		} else {
 			// Implicit 'this' or global function
 			startClass = SymbolTable.getInstance().getCurrentClass();
 		}
 		
-		// Search for method definition in hierarchy
+		// Search for method definition in hierarchy (for static label fallback)
+		TypeClass definingClass = null;
 		if (startClass != null) {
              TypeClass curr = startClass;
-             TypeClass definingClass = null;
              
              while (curr != null) {
                 if (curr.dataMembers != null) {
@@ -213,7 +215,8 @@ public class AstExpCall extends AstExp
                  funcLabel = "Label_" + definingClass.name + "_" + methodName;
                  if (receiver == null) {
                      // Found method in current class hierarchy -> implicit this
-                     isMethodCall = true; 
+                     isMethodCall = true;
+                     useVtable = true;  // Also use vtable for implicit this
                  }
              }
         }
@@ -222,20 +225,23 @@ public class AstExpCall extends AstExp
 			// Fallback to global
 			funcLabel = "Label_" + methodName;
 			// isMethodCall remains false (global function)
+			useVtable = false;  // Global functions don't use vtable
 		}
 
 		// 2. Generate argument temps
 		java.util.List<Temp> argTemps = new java.util.ArrayList<Temp>();
 		
 		// If method call, pass 'this' as first argument
+		Temp thisTemp = null;
 		if (isMethodCall) {
 		    if (receiver != null) {
-		        argTemps.add(receiver.irMe());
+		        thisTemp = receiver.irMe();
+		        argTemps.add(thisTemp);
 		    } else {
 		        // Implicit this - load "this" parameter
-		        Temp t_this = TempFactory.getInstance().getFreshTemp();
-		        Ir.getInstance().AddIrCommand(new IrCommandLoad(t_this, "this"));
-		        argTemps.add(t_this);
+		        thisTemp = TempFactory.getInstance().getFreshTemp();
+		        Ir.getInstance().AddIrCommand(new IrCommandLoad(thisTemp, "this"));
+		        argTemps.add(thisTemp);
 		    }
 		}
 		
@@ -258,7 +264,19 @@ public class AstExpCall extends AstExp
 		}
 		
 		// Emit the call
-		Ir.getInstance().AddIrCommand(new IrCommandCall(result, funcLabel, argTemps));
+		if (useVtable && startClass != null && thisTemp != null) {
+			// Virtual method dispatch via vtable
+			int vtableOffset = startClass.getMethodVtableOffset(methodName);
+			if (vtableOffset >= 0) {
+				Ir.getInstance().AddIrCommand(new IrCommandCallIndirect(result, thisTemp, vtableOffset, argTemps));
+			} else {
+				// Method not found in vtable - fallback to static call
+				Ir.getInstance().AddIrCommand(new IrCommandCall(result, funcLabel, argTemps));
+			}
+		} else {
+			// Static call (global function or fallback)
+			Ir.getInstance().AddIrCommand(new IrCommandCall(result, funcLabel, argTemps));
+		}
 		
 		return result;
 	}

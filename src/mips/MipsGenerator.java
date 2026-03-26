@@ -199,10 +199,11 @@ public class MipsGenerator
 		} else if (scope.equals("local")) {
 			// Local variables allocated in prologue
 			// Use negative offsets from $fp
-			// After saving $ra, $fp, and 10 temp registers (11 words = 44 bytes)
-			// Locals start at -48($fp), -52($fp), etc.
+			// After saving $fp (at 0($fp)), we save 10 temp registers ($t0-$t9)
+			// $t0 at -4($fp), $t1 at -8($fp), ..., $t9 at -40($fp)
+			// Locals start at -44($fp), -48($fp), etc.
 			if (nextLocalOffset == 0) {
-				nextLocalOffset = 48; // Start after saved registers
+				nextLocalOffset = 44; // Start after saved registers (10 regs * 4 = 40 bytes)
 			}
 			localVariableOffsets.put(varName, -nextLocalOffset);
 			nextLocalOffset += 4;
@@ -891,6 +892,27 @@ public class MipsGenerator
 		}
 	}
 	
+	/******************************************/
+	/* Return from void function              */
+	/******************************************/
+	public void returnVoid()
+	{
+		// Don't generate epilogue for main - it uses syscall to exit
+		if (currentFunction != null && currentFunction.equals("Label_main")) {
+			// For main, just exit the program
+			fileWriter.format("\tli $v0,10\n");
+			fileWriter.format("\tsyscall\n");
+			return;
+		}
+		
+		// Generate epilogue immediately for explicit void return
+		if (currentFunction != null && functionInfo != null && functionInfo.containsKey(currentFunction)) {
+			int numLocalVars = functionInfo.get(currentFunction).numTemps;
+			functionEpilogue(numLocalVars);
+			epilogueGenerated = true;  // Mark that epilogue was generated
+		}
+	}
+	
 	/**************************************/
 	/* USUAL SINGLETON IMPLEMENTATION ... */
 	/**************************************/
@@ -995,6 +1017,25 @@ public class MipsGenerator
 		// syscall 4 = print string
 		fileWriter.format("\tli $v0,4\n");
 		fileWriter.format("\tsyscall\n");
+	}
+	
+	/******************************************/
+	/* Emit vtable for a class in .data       */
+	/* vtable contains method addresses       */
+	/******************************************/
+	public void emitVtable(String className, java.util.List<String> methodLabels)
+	{
+		StringBuilder vtable = new StringBuilder();
+		vtable.append("vtable_").append(className).append(":\n");
+		for (String label : methodLabels) {
+			vtable.append("\t.word ").append(label).append("\n");
+		}
+		
+		if (!textStarted) {
+			dataSection.append(vtable.toString());
+		} else {
+			lateGlobals.append(vtable.toString());
+		}
 	}
 	
 }

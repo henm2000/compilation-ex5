@@ -2,6 +2,7 @@
 string_access_violation: .asciiz "Access Violation"
 string_illegal_div_by_0: .asciiz "Illegal Division By Zero"
 string_invalid_ptr_dref: .asciiz "Invalid Pointer Dereference"
+vtable_IntList:
 .text
 Label_MergeLists:
 	subu $sp,$sp,4
@@ -30,18 +31,18 @@ Label_MergeLists:
 	subu $sp,$sp,4
 	sw $t9,0($sp)
 	subu $sp,$sp,12
-	lw $t1,8($fp)
-	li $t0,0
-	beq $t1,$t0,Label_15_AssignOne
-	bne $t1,$t0,Label_16_AssignZero
+	lw $t3,8($fp)
+	li $t9,0
+	beq $t3,$t9,Label_15_AssignOne
+	bne $t3,$t9,Label_16_AssignZero
 Label_15_AssignOne:
-	li $t0,1
+	li $t3,1
 	j Label_14_end
 Label_16_AssignZero:
-	li $t0,0
+	li $t3,0
 	j Label_14_end
 Label_14_end:
-	beq $t0,$zero,Label_1_if_false
+	beq $t3,$zero,Label_1_if_false
 Label_0_if_true:
 	lw $t0,12($fp)
 	move $v0,$t0
@@ -74,18 +75,18 @@ Label_0_if_true:
 	j Label_2_if_end
 Label_1_if_false:
 Label_2_if_end:
-	lw $t1,12($fp)
-	li $t0,0
-	beq $t1,$t0,Label_18_AssignOne
-	bne $t1,$t0,Label_19_AssignZero
+	lw $t9,12($fp)
+	li $t3,0
+	beq $t9,$t3,Label_18_AssignOne
+	bne $t9,$t3,Label_19_AssignZero
 Label_18_AssignOne:
-	li $t0,1
+	li $t3,1
 	j Label_17_end
 Label_19_AssignZero:
-	li $t0,0
+	li $t3,0
 	j Label_17_end
 Label_17_end:
-	beq $t0,$zero,Label_4_if_false
+	beq $t3,$zero,Label_4_if_false
 Label_3_if_true:
 	lw $t0,8($fp)
 	move $v0,$t0
@@ -118,34 +119,34 @@ Label_3_if_true:
 	j Label_5_if_end
 Label_4_if_false:
 Label_5_if_end:
-	lw $t0,8($fp)
-	bnez $t0,load_continue_0
+	lw $t3,8($fp)
+	bnez $t3,load_continue_0
 	la $a0,string_invalid_ptr_dref
 	li $v0,4
 	syscall
 	li $v0,10
 	syscall
 load_continue_0:
-	lw $t1,4($t0)
-	lw $t0,12($fp)
-	bnez $t0,load_continue_1
+	lw $t9,4($t3)
+	lw $t3,12($fp)
+	bnez $t3,load_continue_1
 	la $a0,string_invalid_ptr_dref
 	li $v0,4
 	syscall
 	li $v0,10
 	syscall
 load_continue_1:
-	lw $t0,4($t0)
-	blt $t1,$t0,Label_21_AssignOne
-	bge $t1,$t0,Label_22_AssignZero
+	lw $t3,4($t3)
+	blt $t9,$t3,Label_21_AssignOne
+	bge $t9,$t3,Label_22_AssignZero
 Label_21_AssignOne:
-	li $t0,1
+	li $t3,1
 	j Label_20_end
 Label_22_AssignZero:
-	li $t0,0
+	li $t3,0
 	j Label_20_end
 Label_20_end:
-	beq $t0,$zero,Label_7_if_false
+	beq $t3,$zero,Label_7_if_false
 Label_6_if_true:
 	lw $t0,8($fp)
 	sw $t0,-48($fp)
@@ -206,52 +207,52 @@ store_continue_3:
 	j Label_8_if_end
 Label_7_if_false:
 Label_8_if_end:
-	lw $t0,12($fp)
-	bnez $t0,load_continue_4
+	lw $t3,12($fp)
+	bnez $t3,load_continue_4
 	la $a0,string_invalid_ptr_dref
 	li $v0,4
 	syscall
 	li $v0,10
 	syscall
 load_continue_4:
-	lw $t1,4($t0)
-	lw $t0,8($fp)
-	bnez $t0,load_continue_5
+	lw $t3,4($t3)
+	lw $t9,8($fp)
+	bnez $t9,load_continue_5
 	la $a0,string_invalid_ptr_dref
 	li $v0,4
 	syscall
 	li $v0,10
 	syscall
 load_continue_5:
-	lw $t0,4($t0)
-	blt $t1,$t0,Label_24_AssignOne
-	bge $t1,$t0,Label_25_AssignZero
+	lw $t9,4($t9)
+	blt $t3,$t9,Label_24_AssignOne
+	bge $t3,$t9,Label_25_AssignZero
 Label_24_AssignOne:
-	li $t0,1
+	li $t3,1
 	j Label_23_end
 Label_25_AssignZero:
-	li $t0,0
+	li $t3,0
 	j Label_23_end
 Label_23_end:
-	beq $t0,$zero,Label_10_if_false
+	beq $t3,$zero,Label_10_if_false
 Label_9_if_true:
 	lw $t0,12($fp)
 	sw $t0,-52($fp)
 	lw $t1,-52($fp)
-	lw $t0,8($fp)
-	lw $t2,12($fp)
-	bnez $t2,load_continue_6
+	lw $t2,8($fp)
+	lw $t0,12($fp)
+	bnez $t0,load_continue_6
 	la $a0,string_invalid_ptr_dref
 	li $v0,4
 	syscall
 	li $v0,10
 	syscall
 load_continue_6:
-	lw $t2,8($t2)
-	subu $sp,$sp,4
-	sw $t2,0($sp)
+	lw $t0,8($t0)
 	subu $sp,$sp,4
 	sw $t0,0($sp)
+	subu $sp,$sp,4
+	sw $t2,0($sp)
 	jal Label_MergeLists
 	move $t0,$v0
 	addu $sp,$sp,8
@@ -295,106 +296,87 @@ store_continue_7:
 Label_10_if_false:
 Label_11_if_end:
 main:
-	li $t0,8
-	move $a0,$t0
+	li $t3,12
+	move $a0,$t3
 	li $v0,9
 	syscall
-	move $t0,$v0
-	sw $t0,global_a
-	li $t0,8
-	move $a0,$t0
-	li $v0,9
-	syscall
-	move $t0,$v0
-	sw $t0,global_b
-	li $t0,8
-	move $a0,$t0
-	li $v0,9
-	syscall
-	move $t0,$v0
-	sw $t0,global_c
-	li $t0,8
-	move $a0,$t0
-	li $v0,9
-	syscall
-	move $t0,$v0
-	sw $t0,global_d
-	li $t0,8
-	move $a0,$t0
-	li $v0,9
-	syscall
-	move $t0,$v0
-	sw $t0,global_A
-	li $t0,8
-	move $a0,$t0
-	li $v0,9
-	syscall
-	move $t0,$v0
-	sw $t0,global_B
-	li $t0,8
-	move $a0,$t0
-	li $v0,9
-	syscall
-	move $t0,$v0
-	sw $t0,global_C
-	li $t0,8
-	move $a0,$t0
-	li $v0,9
-	syscall
-	move $t0,$v0
-	sw $t0,global_D
-	lw $t0,global_a
-	li $t1,34
-	bnez $t0,store_continue_8
+	move $t3,$v0
+	la $t4,vtable_IntList  # load vtable address for IntList
+	bnez $t3,store_continue_8
 	la $a0,string_invalid_ptr_dref
 	li $v0,4
 	syscall
 	li $v0,10
 	syscall
 store_continue_8:
-	sw $t1,4($t0)
-	lw $t0,global_b
-	li $t1,70
-	bnez $t0,store_continue_9
+	sw $t4,0($t3)
+	sw $t3,global_a
+	li $t3,12
+	move $a0,$t3
+	li $v0,9
+	syscall
+	move $t3,$v0
+	la $t8,vtable_IntList  # load vtable address for IntList
+	bnez $t3,store_continue_9
 	la $a0,string_invalid_ptr_dref
 	li $v0,4
 	syscall
 	li $v0,10
 	syscall
 store_continue_9:
-	sw $t1,4($t0)
-	lw $t1,global_c
-	li $t0,92
-	bnez $t1,store_continue_10
+	sw $t8,0($t3)
+	sw $t3,global_b
+	li $t3,12
+	move $a0,$t3
+	li $v0,9
+	syscall
+	move $t3,$v0
+	la $t7,vtable_IntList  # load vtable address for IntList
+	bnez $t3,store_continue_10
 	la $a0,string_invalid_ptr_dref
 	li $v0,4
 	syscall
 	li $v0,10
 	syscall
 store_continue_10:
-	sw $t0,4($t1)
-	lw $t0,global_d
-	li $t1,96
-	bnez $t0,store_continue_11
+	sw $t7,0($t3)
+	sw $t3,global_c
+	li $t3,12
+	move $a0,$t3
+	li $v0,9
+	syscall
+	move $t3,$v0
+	la $t1,vtable_IntList  # load vtable address for IntList
+	bnez $t3,store_continue_11
 	la $a0,string_invalid_ptr_dref
 	li $v0,4
 	syscall
 	li $v0,10
 	syscall
 store_continue_11:
-	sw $t1,4($t0)
-	lw $t0,global_A
+	sw $t1,0($t3)
+	sw $t3,global_d
 	li $t1,12
-	bnez $t0,store_continue_12
+	move $a0,$t1
+	li $v0,9
+	syscall
+	move $t1,$v0
+	la $t5,vtable_IntList  # load vtable address for IntList
+	bnez $t1,store_continue_12
 	la $a0,string_invalid_ptr_dref
 	li $v0,4
 	syscall
 	li $v0,10
 	syscall
 store_continue_12:
-	sw $t1,4($t0)
-	lw $t1,global_B
-	li $t0,50
+	sw $t5,0($t1)
+	sw $t1,global_A
+	li $t1,12
+	move $a0,$t1
+	li $v0,9
+	syscall
+	move $t1,$v0
+	la $t6,vtable_IntList  # load vtable address for IntList
 	bnez $t1,store_continue_13
 	la $a0,string_invalid_ptr_dref
 	li $v0,4
@@ -402,29 +384,40 @@ store_continue_12:
 	li $v0,10
 	syscall
 store_continue_13:
-	sw $t0,4($t1)
-	lw $t0,global_C
-	li $t1,97
-	bnez $t0,store_continue_14
+	sw $t6,0($t1)
+	sw $t1,global_B
+	li $t1,12
+	move $a0,$t1
+	li $v0,9
+	syscall
+	move $t1,$v0
+	la $t0,vtable_IntList  # load vtable address for IntList
+	bnez $t1,store_continue_14
 	la $a0,string_invalid_ptr_dref
 	li $v0,4
 	syscall
 	li $v0,10
 	syscall
 store_continue_14:
-	sw $t1,4($t0)
-	lw $t1,global_D
-	li $t0,99
-	bnez $t1,store_continue_15
+	sw $t0,0($t1)
+	sw $t1,global_C
+	li $t0,12
+	move $a0,$t0
+	li $v0,9
+	syscall
+	move $t0,$v0
+	la $t2,vtable_IntList  # load vtable address for IntList
+	bnez $t0,store_continue_15
 	la $a0,string_invalid_ptr_dref
 	li $v0,4
 	syscall
 	li $v0,10
 	syscall
 store_continue_15:
-	sw $t0,4($t1)
+	sw $t2,0($t0)
+	sw $t0,global_D
 	lw $t0,global_a
-	lw $t1,global_b
+	li $t1,34
 	bnez $t0,store_continue_16
 	la $a0,string_invalid_ptr_dref
 	li $v0,4
@@ -432,9 +425,9 @@ store_continue_15:
 	li $v0,10
 	syscall
 store_continue_16:
-	sw $t1,8($t0)
+	sw $t1,4($t0)
 	lw $t1,global_b
-	lw $t0,global_c
+	li $t0,70
 	bnez $t1,store_continue_17
 	la $a0,string_invalid_ptr_dref
 	li $v0,4
@@ -442,9 +435,9 @@ store_continue_16:
 	li $v0,10
 	syscall
 store_continue_17:
-	sw $t0,8($t1)
+	sw $t0,4($t1)
 	lw $t1,global_c
-	lw $t0,global_d
+	li $t0,92
 	bnez $t1,store_continue_18
 	la $a0,string_invalid_ptr_dref
 	li $v0,4
@@ -452,9 +445,9 @@ store_continue_17:
 	li $v0,10
 	syscall
 store_continue_18:
-	sw $t0,8($t1)
+	sw $t0,4($t1)
 	lw $t1,global_d
-	li $t0,0
+	li $t0,96
 	bnez $t1,store_continue_19
 	la $a0,string_invalid_ptr_dref
 	li $v0,4
@@ -462,19 +455,19 @@ store_continue_18:
 	li $v0,10
 	syscall
 store_continue_19:
-	sw $t0,8($t1)
-	lw $t0,global_A
-	lw $t1,global_B
-	bnez $t0,store_continue_20
+	sw $t0,4($t1)
+	lw $t1,global_A
+	li $t0,12
+	bnez $t1,store_continue_20
 	la $a0,string_invalid_ptr_dref
 	li $v0,4
 	syscall
 	li $v0,10
 	syscall
 store_continue_20:
-	sw $t1,8($t0)
+	sw $t0,4($t1)
 	lw $t0,global_B
-	lw $t1,global_C
+	li $t1,50
 	bnez $t0,store_continue_21
 	la $a0,string_invalid_ptr_dref
 	li $v0,4
@@ -482,9 +475,9 @@ store_continue_20:
 	li $v0,10
 	syscall
 store_continue_21:
-	sw $t1,8($t0)
+	sw $t1,4($t0)
 	lw $t0,global_C
-	lw $t1,global_D
+	li $t1,97
 	bnez $t0,store_continue_22
 	la $a0,string_invalid_ptr_dref
 	li $v0,4
@@ -492,9 +485,9 @@ store_continue_21:
 	li $v0,10
 	syscall
 store_continue_22:
-	sw $t1,8($t0)
+	sw $t1,4($t0)
 	lw $t0,global_D
-	li $t1,0
+	li $t1,99
 	bnez $t0,store_continue_23
 	la $a0,string_invalid_ptr_dref
 	li $v0,4
@@ -502,7 +495,87 @@ store_continue_22:
 	li $v0,10
 	syscall
 store_continue_23:
+	sw $t1,4($t0)
+	lw $t1,global_a
+	lw $t0,global_b
+	bnez $t1,store_continue_24
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_24:
+	sw $t0,8($t1)
+	lw $t0,global_b
+	lw $t1,global_c
+	bnez $t0,store_continue_25
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_25:
 	sw $t1,8($t0)
+	lw $t0,global_c
+	lw $t1,global_d
+	bnez $t0,store_continue_26
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_26:
+	sw $t1,8($t0)
+	lw $t1,global_d
+	li $t0,0
+	bnez $t1,store_continue_27
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_27:
+	sw $t0,8($t1)
+	lw $t1,global_A
+	lw $t0,global_B
+	bnez $t1,store_continue_28
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_28:
+	sw $t0,8($t1)
+	lw $t0,global_B
+	lw $t1,global_C
+	bnez $t0,store_continue_29
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_29:
+	sw $t1,8($t0)
+	lw $t1,global_C
+	lw $t0,global_D
+	bnez $t1,store_continue_30
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_30:
+	sw $t0,8($t1)
+	lw $t1,global_D
+	li $t0,0
+	bnez $t1,store_continue_31
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_31:
+	sw $t0,8($t1)
 	lw $t0,global_a
 	lw $t1,global_A
 	subu $sp,$sp,4
@@ -528,24 +601,24 @@ Label_28_AssignZero:
 Label_26_end:
 	sub $t0,$t1,$t0
 	li $t9,32767
-	ble $t0,$t9,sub_no_overflow_24
+	ble $t0,$t9,sub_no_overflow_32
 	li $t0,32767
-	j sub_done_26
-sub_no_overflow_24:
+	j sub_done_34
+sub_no_overflow_32:
 	li $t9,-32768
-	bge $t0,$t9,sub_no_underflow_25
+	bge $t0,$t9,sub_no_underflow_33
 	li $t0,-32768
-sub_no_underflow_25:
-sub_done_26:
+sub_no_underflow_33:
+sub_done_34:
 	beq $t0,$zero,Label_12_end
 	lw $t0,global_l
-	bnez $t0,load_continue_27
+	bnez $t0,load_continue_35
 	la $a0,string_invalid_ptr_dref
 	li $v0,4
 	syscall
 	li $v0,10
 	syscall
-load_continue_27:
+load_continue_35:
 	lw $t0,4($t0)
 	move $a0,$t0
 	li $v0,1
@@ -554,13 +627,13 @@ load_continue_27:
 	li $v0,11
 	syscall
 	lw $t0,global_l
-	bnez $t0,load_continue_28
+	bnez $t0,load_continue_36
 	la $a0,string_invalid_ptr_dref
 	li $v0,4
 	syscall
 	li $v0,10
 	syscall
-load_continue_28:
+load_continue_36:
 	lw $t0,8($t0)
 	sw $t0,global_l
 	j Label_13_start

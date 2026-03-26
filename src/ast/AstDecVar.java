@@ -103,7 +103,7 @@ public class AstDecVar extends AstDec
 
 		if (init != null)
 		{
-			Ir.getInstance().AddIrCommand(new IrCommandStore(id,init.irMe()));
+			Ir.getInstance().AddIrCommand(new IrCommandStore(id, init.irMe()));
 		}
 		return null;
 	}

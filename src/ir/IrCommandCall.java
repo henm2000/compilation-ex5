@@ -33,29 +33,52 @@ public class IrCommandCall extends IrCommand
 
 	public void mipsMe()
 	{
+		mips.MipsGenerator gen = mips.MipsGenerator.getInstance();
+		
 		// Handle special built-in functions
 		if (funcName.equals("Label_PrintInt") && args.size() == 1) {
 			// Use the printInt helper
-			mips.MipsGenerator.getInstance().printInt(args.get(0));
+			gen.printInt(args.get(0));
 		} else if (funcName.equals("Label_PrintString") && args.size() == 1) {
 			// Use the printString helper
-			mips.MipsGenerator gen = mips.MipsGenerator.getInstance();
 			String regStr = gen.tempToReg(args.get(0));
 			gen.fileWriter.format("\tmove $a0,%s\n", regStr);
 			gen.fileWriter.format("\tli $v0,4\n");
 			gen.fileWriter.format("\tsyscall\n");
 		} else {
 			// User-defined function call
-			// Push arguments onto stack in RIGHT-TO-LEFT order (so first arg is at top)
-			for (int i = args.size() - 1; i >= 0; i--) {
-				mips.MipsGenerator.getInstance().pushArg(args.get(i));
+			
+			// Save all caller-saved registers ($t0-$t9) to stack before call
+			// This ensures temps that are live across the call are preserved
+			gen.fileWriter.format("\t# Save caller-saved registers\n");
+			gen.fileWriter.format("\taddiu $sp,$sp,-40\n");  // 10 registers * 4 bytes
+			for (int i = 0; i < 10; i++) {
+				gen.fileWriter.format("\tsw $t%d,%d($sp)\n", i, i * 4);
 			}
 			
-			// Call the function
-			mips.MipsGenerator.getInstance().call(dst, funcName);
+			// Push arguments onto stack in RIGHT-TO-LEFT order (so first arg is at top)
+			for (int i = args.size() - 1; i >= 0; i--) {
+				gen.pushArg(args.get(i));
+			}
+			
+			// Call the function (pass null for dst - we'll handle move after restore)
+			gen.call(null, funcName);
 			
 			// Pop arguments from stack
-			mips.MipsGenerator.getInstance().popArgs(args.size());
+			gen.popArgs(args.size());
+			
+			// Restore caller-saved registers after call
+			gen.fileWriter.format("\t# Restore caller-saved registers\n");
+			for (int i = 0; i < 10; i++) {
+				gen.fileWriter.format("\tlw $t%d,%d($sp)\n", i, i * 4);
+			}
+			gen.fileWriter.format("\taddiu $sp,$sp,40\n");
+			
+			// Move result to dst (must be after restore to not clobber it)
+			if (dst != null) {
+				String dstReg = gen.tempToReg(dst);
+				gen.fileWriter.format("\tmove %s,$v0\n", dstReg);
+			}
 		}
 	}
 }

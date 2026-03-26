@@ -119,7 +119,7 @@ public class AstVarSimple extends AstVar
              // 3. Load from memory
              Ir.getInstance().AddIrCommand(new IrCommandLoadMemory(t, t_this, offset));
         } else {
-		     Ir.getInstance().AddIrCommand(new IrCommandLoad(t,name));
+		     Ir.getInstance().AddIrCommand(new IrCommandLoad(t, name));
         }
 		return t;
 	}

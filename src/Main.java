@@ -50,6 +50,13 @@ public class Main
 			{
                 // ast.printMe(); // Disabled - GraphViz output not needed
 				ast.semantMe();
+				
+				/*************************/
+				/* Initialize MipsGenerator BEFORE irMe */
+				/* so vtable emission uses correct file */
+				/*************************/
+				mips.MipsGenerator.getInstance(outputFileName);
+				
 				/*************************/
 				/* [6a] Generate IR ... */
 				/*************************/
