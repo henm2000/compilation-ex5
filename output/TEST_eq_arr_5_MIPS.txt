@@ -1,0 +1,34 @@
+.data
+string_access_violation: .asciiz "Access Violation"
+string_illegal_div_by_0: .asciiz "Illegal Division By Zero"
+string_invalid_ptr_dref: .asciiz "Invalid Pointer Dereference"
+.text
+main:
+	li $t0,0
+	sw $t0,global_a1
+	li $t0,0
+	sw $t0,global_a2
+	lw $t0,global_a1
+	lw $t1,global_a2
+	beq $t0,$t1,Label_1_AssignOne
+	bne $t0,$t1,Label_2_AssignZero
+Label_1_AssignOne:
+	li $t0,1
+	j Label_0_end
+Label_2_AssignZero:
+	li $t0,0
+	j Label_0_end
+Label_0_end:
+	move $a0,$t0
+	li $v0,1
+	syscall
+	li $a0,32
+	li $v0,11
+	syscall
+
+.data
+global_a1: .word 0
+global_a2: .word 0
+.text
+	li $v0,10
+	syscall

@@ -1,0 +1,98 @@
+.data
+string_access_violation: .asciiz "Access Violation"
+string_illegal_div_by_0: .asciiz "Illegal Division By Zero"
+string_invalid_ptr_dref: .asciiz "Invalid Pointer Dereference"
+vtable_A:
+	.word Label_A_f
+.text
+Label_A_f:
+	subu $sp,$sp,4
+	sw $ra,0($sp)
+	subu $sp,$sp,4
+	sw $fp,0($sp)
+	move $fp,$sp
+	subu $sp,$sp,4
+	sw $t0,0($sp)
+	subu $sp,$sp,4
+	sw $t1,0($sp)
+	subu $sp,$sp,4
+	sw $t2,0($sp)
+	subu $sp,$sp,4
+	sw $t3,0($sp)
+	subu $sp,$sp,4
+	sw $t4,0($sp)
+	subu $sp,$sp,4
+	sw $t5,0($sp)
+	subu $sp,$sp,4
+	sw $t6,0($sp)
+	subu $sp,$sp,4
+	sw $t7,0($sp)
+	subu $sp,$sp,4
+	sw $t8,0($sp)
+	subu $sp,$sp,4
+	sw $t9,0($sp)
+	lw $t9,0($sp)
+	addu $sp,$sp,4
+	lw $t8,0($sp)
+	addu $sp,$sp,4
+	lw $t7,0($sp)
+	addu $sp,$sp,4
+	lw $t6,0($sp)
+	addu $sp,$sp,4
+	lw $t5,0($sp)
+	addu $sp,$sp,4
+	lw $t4,0($sp)
+	addu $sp,$sp,4
+	lw $t3,0($sp)
+	addu $sp,$sp,4
+	lw $t2,0($sp)
+	addu $sp,$sp,4
+	lw $t1,0($sp)
+	addu $sp,$sp,4
+	lw $t0,0($sp)
+	addu $sp,$sp,4
+	lw $fp,0($sp)
+	addu $sp,$sp,4
+	lw $ra,0($sp)
+	addu $sp,$sp,4
+	jr $ra
+main:
+	li $t0,12
+	move $a0,$t0
+	li $v0,9
+	syscall
+	move $t0,$v0
+	la $t1,vtable_A  # load vtable address for A
+	bnez $t0,store_continue_0
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_0:
+	sw $t1,0($t0)
+	sw $t0,global_a
+	lw $t0,global_a
+	bnez $t0,load_continue_1
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+load_continue_1:
+	lw $t0,4($t0)
+	li $t1,2
+	bnez $t0,store_continue_2
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_2:
+	sw $t1,8($t0)
+
+.data
+global_a: .word 0
+.text
+	li $v0,10
+	syscall

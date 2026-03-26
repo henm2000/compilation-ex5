@@ -4,6 +4,8 @@ import temp.*;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import types.*;
 import symboltable.SymbolTable;
 import exceptions.SemanticErrorException;
@@ -108,6 +110,8 @@ public class AstDecClass extends AstDec
         HashMap<String, Type> definedMembers = new HashMap<>();
         java.util.ArrayList<Type> memberTypesList = new java.util.ArrayList<>();
         java.util.ArrayList<AstDecFunc> methodsToProcess = new java.util.ArrayList<>();
+        java.util.HashMap<AstDecFunc, java.util.Set<String>> methodVisibleFields = new java.util.HashMap<>();
+        java.util.Set<String> visibleFieldsSoFar = new java.util.HashSet<>();
         
         // Collect all member names from superclass for shadowing check
         HashMap<String, Type> superMembers = new HashMap<>();
@@ -117,6 +121,9 @@ public class AstDecClass extends AstDec
                 for (TypeList it = current.dataMembers; it != null; it = it.tail) {
                     if (it.head != null && it.head.name != null) {
                         superMembers.put(it.head.name, it.head);
+                        if (it.head instanceof TypeClassField) {
+                            visibleFieldsSoFar.add(it.head.name);
+                        }
                     }
                 }
                 current = current.father;
@@ -150,6 +157,7 @@ public class AstDecClass extends AstDec
                 
                 // Add to defined members
                 definedMembers.put(memberName, baseType);
+                visibleFieldsSoFar.add(memberName);
                 
                 // Wrap field in TypeClassField and add to list
                 Type typeToAdd = new TypeClassField(memberName, baseType);
@@ -227,6 +235,7 @@ public class AstDecClass extends AstDec
                 
                 // Save for Pass 2
                 methodsToProcess.add(funcDec);
+                methodVisibleFields.put(funcDec, new java.util.HashSet<>(visibleFieldsSoFar));
             }
         }
         
@@ -251,7 +260,9 @@ public class AstDecClass extends AstDec
         
         // PASS 2: Now semanticize method bodies (all fields and method signatures are available)
         for (AstDecFunc method : methodsToProcess) {
+            SymbolTable.getInstance().setVisibleClassFields(methodVisibleFields.get(method));
             method.semanticizeBody();
+            SymbolTable.getInstance().clearVisibleClassFields();
         }
 
         /*****************/

@@ -1,0 +1,483 @@
+.data
+string_access_violation: .asciiz "Access Violation"
+string_illegal_div_by_0: .asciiz "Illegal Division By Zero"
+string_invalid_ptr_dref: .asciiz "Invalid Pointer Dereference"
+.text
+Label_foo:
+	subu $sp,$sp,4
+	sw $ra,0($sp)
+	subu $sp,$sp,4
+	sw $fp,0($sp)
+	move $fp,$sp
+	subu $sp,$sp,4
+	sw $t0,0($sp)
+	subu $sp,$sp,4
+	sw $t1,0($sp)
+	subu $sp,$sp,4
+	sw $t2,0($sp)
+	subu $sp,$sp,4
+	sw $t3,0($sp)
+	subu $sp,$sp,4
+	sw $t4,0($sp)
+	subu $sp,$sp,4
+	sw $t5,0($sp)
+	subu $sp,$sp,4
+	sw $t6,0($sp)
+	subu $sp,$sp,4
+	sw $t7,0($sp)
+	subu $sp,$sp,4
+	sw $t8,0($sp)
+	subu $sp,$sp,4
+	sw $t9,0($sp)
+	subu $sp,$sp,12
+	lw $t0,8($fp)
+	li $t1,1
+	beq $t0,$t1,Label_16_AssignOne
+	bne $t0,$t1,Label_17_AssignZero
+Label_16_AssignOne:
+	li $t0,1
+	j Label_15_end
+Label_17_AssignZero:
+	li $t0,0
+	j Label_15_end
+Label_15_end:
+	beq $t0,$zero,Label_1_if_false
+Label_0_if_true:
+.data
+string_const_0: .asciiz "One"
+.text
+	la $t0,string_const_0
+	move $v0,$t0
+	addu $sp,$sp,12
+	lw $t9,0($sp)
+	addu $sp,$sp,4
+	lw $t8,0($sp)
+	addu $sp,$sp,4
+	lw $t7,0($sp)
+	addu $sp,$sp,4
+	lw $t6,0($sp)
+	addu $sp,$sp,4
+	lw $t5,0($sp)
+	addu $sp,$sp,4
+	lw $t4,0($sp)
+	addu $sp,$sp,4
+	lw $t3,0($sp)
+	addu $sp,$sp,4
+	lw $t2,0($sp)
+	addu $sp,$sp,4
+	lw $t1,0($sp)
+	addu $sp,$sp,4
+	lw $t0,0($sp)
+	addu $sp,$sp,4
+	lw $fp,0($sp)
+	addu $sp,$sp,4
+	lw $ra,0($sp)
+	addu $sp,$sp,4
+	jr $ra
+	j Label_2_if_end
+Label_1_if_false:
+Label_2_if_end:
+	lw $t0,8($fp)
+	li $t1,2
+	beq $t0,$t1,Label_19_AssignOne
+	bne $t0,$t1,Label_20_AssignZero
+Label_19_AssignOne:
+	li $t0,1
+	j Label_18_end
+Label_20_AssignZero:
+	li $t0,0
+	j Label_18_end
+Label_18_end:
+	beq $t0,$zero,Label_4_if_false
+Label_3_if_true:
+.data
+string_const_1: .asciiz "Two"
+.text
+	la $t0,string_const_1
+	move $v0,$t0
+	addu $sp,$sp,12
+	lw $t9,0($sp)
+	addu $sp,$sp,4
+	lw $t8,0($sp)
+	addu $sp,$sp,4
+	lw $t7,0($sp)
+	addu $sp,$sp,4
+	lw $t6,0($sp)
+	addu $sp,$sp,4
+	lw $t5,0($sp)
+	addu $sp,$sp,4
+	lw $t4,0($sp)
+	addu $sp,$sp,4
+	lw $t3,0($sp)
+	addu $sp,$sp,4
+	lw $t2,0($sp)
+	addu $sp,$sp,4
+	lw $t1,0($sp)
+	addu $sp,$sp,4
+	lw $t0,0($sp)
+	addu $sp,$sp,4
+	lw $fp,0($sp)
+	addu $sp,$sp,4
+	lw $ra,0($sp)
+	addu $sp,$sp,4
+	jr $ra
+	j Label_5_if_end
+Label_4_if_false:
+Label_5_if_end:
+	lw $t0,8($fp)
+	li $t1,3
+	beq $t0,$t1,Label_22_AssignOne
+	bne $t0,$t1,Label_23_AssignZero
+Label_22_AssignOne:
+	li $t0,1
+	j Label_21_end
+Label_23_AssignZero:
+	li $t0,0
+	j Label_21_end
+Label_21_end:
+	beq $t0,$zero,Label_7_if_false
+Label_6_if_true:
+.data
+string_const_2: .asciiz "Tres"
+.text
+	la $t0,string_const_2
+	move $v0,$t0
+	addu $sp,$sp,12
+	lw $t9,0($sp)
+	addu $sp,$sp,4
+	lw $t8,0($sp)
+	addu $sp,$sp,4
+	lw $t7,0($sp)
+	addu $sp,$sp,4
+	lw $t6,0($sp)
+	addu $sp,$sp,4
+	lw $t5,0($sp)
+	addu $sp,$sp,4
+	lw $t4,0($sp)
+	addu $sp,$sp,4
+	lw $t3,0($sp)
+	addu $sp,$sp,4
+	lw $t2,0($sp)
+	addu $sp,$sp,4
+	lw $t1,0($sp)
+	addu $sp,$sp,4
+	lw $t0,0($sp)
+	addu $sp,$sp,4
+	lw $fp,0($sp)
+	addu $sp,$sp,4
+	lw $ra,0($sp)
+	addu $sp,$sp,4
+	jr $ra
+	j Label_8_if_end
+Label_7_if_false:
+Label_8_if_end:
+.data
+string_const_3: .asciiz "hello"
+.text
+	la $t0,string_const_3
+.data
+string_const_4: .asciiz "goodbye"
+.text
+	la $t1,string_const_4
+	move $s0,$t0
+	move $s1,$t1
+strcmp_loop_start_0:
+	lb $t9,0($s0)
+	lb $a0,0($s1)
+	bne $t9,$a0,strcmp_not_equal_1
+	beqz $t9,strcmp_equal_2
+	addi $s0,$s0,1
+	addi $s1,$s1,1
+	j strcmp_loop_start_0
+strcmp_equal_2:
+	li $t0,1
+	j strcmp_done_3
+strcmp_not_equal_1:
+	li $t0,0
+strcmp_done_3:
+	beq $t0,$zero,Label_10_if_false
+Label_9_if_true:
+.data
+string_const_5: .asciiz "Paul"
+.text
+	la $t0,string_const_5
+	move $v0,$t0
+	addu $sp,$sp,12
+	lw $t9,0($sp)
+	addu $sp,$sp,4
+	lw $t8,0($sp)
+	addu $sp,$sp,4
+	lw $t7,0($sp)
+	addu $sp,$sp,4
+	lw $t6,0($sp)
+	addu $sp,$sp,4
+	lw $t5,0($sp)
+	addu $sp,$sp,4
+	lw $t4,0($sp)
+	addu $sp,$sp,4
+	lw $t3,0($sp)
+	addu $sp,$sp,4
+	lw $t2,0($sp)
+	addu $sp,$sp,4
+	lw $t1,0($sp)
+	addu $sp,$sp,4
+	lw $t0,0($sp)
+	addu $sp,$sp,4
+	lw $fp,0($sp)
+	addu $sp,$sp,4
+	lw $ra,0($sp)
+	addu $sp,$sp,4
+	jr $ra
+	j Label_11_if_end
+Label_10_if_false:
+Label_11_if_end:
+.data
+string_const_6: .asciiz "hello"
+.text
+	la $t1,string_const_6
+.data
+string_const_7: .asciiz "goodbye"
+.text
+	la $t0,string_const_7
+	move $s0,$t1
+	move $s1,$t0
+strcmp_loop_start_4:
+	lb $t9,0($s0)
+	lb $a0,0($s1)
+	bne $t9,$a0,strcmp_not_equal_5
+	beqz $t9,strcmp_equal_6
+	addi $s0,$s0,1
+	addi $s1,$s1,1
+	j strcmp_loop_start_4
+strcmp_equal_6:
+	li $t1,1
+	j strcmp_done_7
+strcmp_not_equal_5:
+	li $t1,0
+strcmp_done_7:
+	lw $t0,8($fp)
+	sub $t0,$t1,$t0
+	li $t9,32767
+	ble $t0,$t9,sub_no_overflow_8
+	li $t0,32767
+	j sub_done_10
+sub_no_overflow_8:
+	li $t9,-32768
+	bge $t0,$t9,sub_no_underflow_9
+	li $t0,-32768
+sub_no_underflow_9:
+sub_done_10:
+	beq $t0,$zero,Label_13_if_false
+Label_12_if_true:
+.data
+string_const_8: .asciiz "George"
+.text
+	la $t0,string_const_8
+	move $v0,$t0
+	addu $sp,$sp,12
+	lw $t9,0($sp)
+	addu $sp,$sp,4
+	lw $t8,0($sp)
+	addu $sp,$sp,4
+	lw $t7,0($sp)
+	addu $sp,$sp,4
+	lw $t6,0($sp)
+	addu $sp,$sp,4
+	lw $t5,0($sp)
+	addu $sp,$sp,4
+	lw $t4,0($sp)
+	addu $sp,$sp,4
+	lw $t3,0($sp)
+	addu $sp,$sp,4
+	lw $t2,0($sp)
+	addu $sp,$sp,4
+	lw $t1,0($sp)
+	addu $sp,$sp,4
+	lw $t0,0($sp)
+	addu $sp,$sp,4
+	lw $fp,0($sp)
+	addu $sp,$sp,4
+	lw $ra,0($sp)
+	addu $sp,$sp,4
+	jr $ra
+	j Label_14_if_end
+Label_13_if_false:
+Label_14_if_end:
+.data
+string_const_9: .asciiz "Default"
+.text
+	la $t0,string_const_9
+	move $v0,$t0
+	addu $sp,$sp,12
+	lw $t9,0($sp)
+	addu $sp,$sp,4
+	lw $t8,0($sp)
+	addu $sp,$sp,4
+	lw $t7,0($sp)
+	addu $sp,$sp,4
+	lw $t6,0($sp)
+	addu $sp,$sp,4
+	lw $t5,0($sp)
+	addu $sp,$sp,4
+	lw $t4,0($sp)
+	addu $sp,$sp,4
+	lw $t3,0($sp)
+	addu $sp,$sp,4
+	lw $t2,0($sp)
+	addu $sp,$sp,4
+	lw $t1,0($sp)
+	addu $sp,$sp,4
+	lw $t0,0($sp)
+	addu $sp,$sp,4
+	lw $fp,0($sp)
+	addu $sp,$sp,4
+	lw $ra,0($sp)
+	addu $sp,$sp,4
+	jr $ra
+main:
+	li $t0,1
+	# Save caller-saved registers
+	addiu $sp,$sp,-40
+	sw $t0,0($sp)
+	sw $t1,4($sp)
+	sw $t2,8($sp)
+	sw $t3,12($sp)
+	sw $t4,16($sp)
+	sw $t5,20($sp)
+	sw $t6,24($sp)
+	sw $t7,28($sp)
+	sw $t8,32($sp)
+	sw $t9,36($sp)
+	subu $sp,$sp,4
+	sw $t0,0($sp)
+	jal Label_foo
+	addu $sp,$sp,4
+	# Restore caller-saved registers
+	lw $t0,0($sp)
+	lw $t1,4($sp)
+	lw $t2,8($sp)
+	lw $t3,12($sp)
+	lw $t4,16($sp)
+	lw $t5,20($sp)
+	lw $t6,24($sp)
+	lw $t7,28($sp)
+	lw $t8,32($sp)
+	lw $t9,36($sp)
+	addiu $sp,$sp,40
+	move $t0,$v0
+	sw $t0,global_s
+	lw $t0,global_s
+	move $a0,$t0
+	li $v0,4
+	syscall
+	li $t0,0
+	# Save caller-saved registers
+	addiu $sp,$sp,-40
+	sw $t0,0($sp)
+	sw $t1,4($sp)
+	sw $t2,8($sp)
+	sw $t3,12($sp)
+	sw $t4,16($sp)
+	sw $t5,20($sp)
+	sw $t6,24($sp)
+	sw $t7,28($sp)
+	sw $t8,32($sp)
+	sw $t9,36($sp)
+	subu $sp,$sp,4
+	sw $t0,0($sp)
+	jal Label_foo
+	addu $sp,$sp,4
+	# Restore caller-saved registers
+	lw $t0,0($sp)
+	lw $t1,4($sp)
+	lw $t2,8($sp)
+	lw $t3,12($sp)
+	lw $t4,16($sp)
+	lw $t5,20($sp)
+	lw $t6,24($sp)
+	lw $t7,28($sp)
+	lw $t8,32($sp)
+	lw $t9,36($sp)
+	addiu $sp,$sp,40
+	move $t0,$v0
+	sw $t0,global_s
+	lw $t0,global_s
+	move $a0,$t0
+	li $v0,4
+	syscall
+	li $t0,-1
+	# Save caller-saved registers
+	addiu $sp,$sp,-40
+	sw $t0,0($sp)
+	sw $t1,4($sp)
+	sw $t2,8($sp)
+	sw $t3,12($sp)
+	sw $t4,16($sp)
+	sw $t5,20($sp)
+	sw $t6,24($sp)
+	sw $t7,28($sp)
+	sw $t8,32($sp)
+	sw $t9,36($sp)
+	subu $sp,$sp,4
+	sw $t0,0($sp)
+	jal Label_foo
+	addu $sp,$sp,4
+	# Restore caller-saved registers
+	lw $t0,0($sp)
+	lw $t1,4($sp)
+	lw $t2,8($sp)
+	lw $t3,12($sp)
+	lw $t4,16($sp)
+	lw $t5,20($sp)
+	lw $t6,24($sp)
+	lw $t7,28($sp)
+	lw $t8,32($sp)
+	lw $t9,36($sp)
+	addiu $sp,$sp,40
+	move $t0,$v0
+	sw $t0,global_s
+	lw $t0,global_s
+	move $a0,$t0
+	li $v0,4
+	syscall
+	li $t0,101
+	# Save caller-saved registers
+	addiu $sp,$sp,-40
+	sw $t0,0($sp)
+	sw $t1,4($sp)
+	sw $t2,8($sp)
+	sw $t3,12($sp)
+	sw $t4,16($sp)
+	sw $t5,20($sp)
+	sw $t6,24($sp)
+	sw $t7,28($sp)
+	sw $t8,32($sp)
+	sw $t9,36($sp)
+	subu $sp,$sp,4
+	sw $t0,0($sp)
+	jal Label_foo
+	addu $sp,$sp,4
+	# Restore caller-saved registers
+	lw $t0,0($sp)
+	lw $t1,4($sp)
+	lw $t2,8($sp)
+	lw $t3,12($sp)
+	lw $t4,16($sp)
+	lw $t5,20($sp)
+	lw $t6,24($sp)
+	lw $t7,28($sp)
+	lw $t8,32($sp)
+	lw $t9,36($sp)
+	addiu $sp,$sp,40
+	move $t0,$v0
+	sw $t0,global_s
+	lw $t0,global_s
+	move $a0,$t0
+	li $v0,4
+	syscall
+
+.data
+global_s: .word 0
+.text
+	li $v0,10
+	syscall

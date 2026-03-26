@@ -1,0 +1,135 @@
+.data
+string_access_violation: .asciiz "Access Violation"
+string_illegal_div_by_0: .asciiz "Illegal Division By Zero"
+string_invalid_ptr_dref: .asciiz "Invalid Pointer Dereference"
+vtable_MyClass:
+	.word Label_MyClass_oops
+.text
+Label_MyClass_oops:
+	subu $sp,$sp,4
+	sw $ra,0($sp)
+	subu $sp,$sp,4
+	sw $fp,0($sp)
+	move $fp,$sp
+	subu $sp,$sp,4
+	sw $t0,0($sp)
+	subu $sp,$sp,4
+	sw $t1,0($sp)
+	subu $sp,$sp,4
+	sw $t2,0($sp)
+	subu $sp,$sp,4
+	sw $t3,0($sp)
+	subu $sp,$sp,4
+	sw $t4,0($sp)
+	subu $sp,$sp,4
+	sw $t5,0($sp)
+	subu $sp,$sp,4
+	sw $t6,0($sp)
+	subu $sp,$sp,4
+	sw $t7,0($sp)
+	subu $sp,$sp,4
+	sw $t8,0($sp)
+	subu $sp,$sp,4
+	sw $t9,0($sp)
+	subu $sp,$sp,20
+.data
+string_const_0: .asciiz "what"
+.text
+	la $t0,string_const_0
+	move $a0,$t0
+	li $v0,4
+	syscall
+	li $t0,0
+	sw $t0,-44($fp)
+	li $t0,3
+	lw $t1,-44($fp)
+	bnez $t1,div_continue_0
+	la $a0,string_illegal_div_by_0
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+div_continue_0:
+	div $t0,$t1
+	mflo $t0
+	sw $t0,-48($fp)
+	addu $sp,$sp,20
+	lw $t9,0($sp)
+	addu $sp,$sp,4
+	lw $t8,0($sp)
+	addu $sp,$sp,4
+	lw $t7,0($sp)
+	addu $sp,$sp,4
+	lw $t6,0($sp)
+	addu $sp,$sp,4
+	lw $t5,0($sp)
+	addu $sp,$sp,4
+	lw $t4,0($sp)
+	addu $sp,$sp,4
+	lw $t3,0($sp)
+	addu $sp,$sp,4
+	lw $t2,0($sp)
+	addu $sp,$sp,4
+	lw $t1,0($sp)
+	addu $sp,$sp,4
+	lw $t0,0($sp)
+	addu $sp,$sp,4
+	lw $fp,0($sp)
+	addu $sp,$sp,4
+	lw $ra,0($sp)
+	addu $sp,$sp,4
+	jr $ra
+main:
+	li $t0,4
+	move $a0,$t0
+	li $v0,9
+	syscall
+	move $t1,$v0
+	la $t0,vtable_MyClass  # load vtable address for MyClass
+	bnez $t1,store_continue_1
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_1:
+	sw $t0,0($t1)
+	sw $t1,global_wow
+	lw $t0,global_wow
+	lw $t9,0($t0)  # load vtable ptr
+	lw $t9,0($t9)  # load method addr from vtable
+	# Save caller-saved registers
+	addiu $sp,$sp,-40
+	sw $t0,0($sp)
+	sw $t1,4($sp)
+	sw $t2,8($sp)
+	sw $t3,12($sp)
+	sw $t4,16($sp)
+	sw $t5,20($sp)
+	sw $t6,24($sp)
+	sw $t7,28($sp)
+	sw $t8,32($sp)
+	sw $t9,36($sp)
+	lw $t9,36($sp)
+	subu $sp,$sp,4
+	sw $t0,0($sp)
+	jalr $t9  # indirect call
+	addu $sp,$sp,4
+	# Restore caller-saved registers
+	lw $t0,0($sp)
+	lw $t1,4($sp)
+	lw $t2,8($sp)
+	lw $t3,12($sp)
+	lw $t4,16($sp)
+	lw $t5,20($sp)
+	lw $t6,24($sp)
+	lw $t7,28($sp)
+	lw $t8,32($sp)
+	lw $t9,36($sp)
+	addiu $sp,$sp,40
+
+.data
+global_wow: .word 0
+.text
+	li $v0,10
+	syscall

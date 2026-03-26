@@ -1,0 +1,348 @@
+.data
+string_access_violation: .asciiz "Access Violation"
+string_illegal_div_by_0: .asciiz "Illegal Division By Zero"
+string_invalid_ptr_dref: .asciiz "Invalid Pointer Dereference"
+global_ssssss: .word 0
+string_const_0: .asciiz ""
+global_coco: .word 0
+string_const_1: .asciiz "ko"
+global_lolo: .word 0
+string_const_2: .asciiz "po"
+.text
+main:
+	la $t0,string_const_0
+	sw $t0,global_ssssss
+	la $t0,string_const_1
+	sw $t0,global_coco
+	la $t0,string_const_2
+	sw $t0,global_lolo
+	li $t1,7
+	li $t0,2
+	add $t1,$t1,$t0
+	li $t9,32767
+	ble $t1,$t9,add_no_overflow_0
+	li $t1,32767
+	j add_done_2
+add_no_overflow_0:
+	li $t9,-32768
+	bge $t1,$t9,add_no_underflow_1
+	li $t1,-32768
+add_no_underflow_1:
+add_done_2:
+	li $t0,1
+	add $t2,$t1,$t0
+	li $t9,32767
+	ble $t2,$t9,add_no_overflow_3
+	li $t2,32767
+	j add_done_5
+add_no_overflow_3:
+	li $t9,-32768
+	bge $t2,$t9,add_no_underflow_4
+	li $t2,-32768
+add_no_underflow_4:
+add_done_5:
+	li $t1,2
+	li $t0,6
+	mul $t0,$t1,$t0
+	li $t9,32767
+	ble $t0,$t9,mul_no_overflow_6
+	li $t0,32767
+	j mul_done_8
+mul_no_overflow_6:
+	li $t9,-32768
+	bge $t0,$t9,mul_no_underflow_7
+	li $t0,-32768
+mul_no_underflow_7:
+mul_done_8:
+	sub $t0,$t2,$t0
+	li $t9,32767
+	ble $t0,$t9,sub_no_overflow_9
+	li $t0,32767
+	j sub_done_11
+sub_no_overflow_9:
+	li $t9,-32768
+	bge $t0,$t9,sub_no_underflow_10
+	li $t0,-32768
+sub_no_underflow_10:
+sub_done_11:
+	sw $t0,global_i
+	lw $t0,global_coco
+	lw $t1,global_ssssss
+	move $s0,$t0
+	move $s1,$t1
+	move $s2,$zero
+	move $s4,$s0
+concat_loop1_start_12:
+	lb $a0,0($s4)
+	beqz $a0,concat_loop1_end_13
+	addi $s2,$s2,1
+	addi $s4,$s4,1
+	j concat_loop1_start_12
+concat_loop1_end_13:
+	move $t9,$s2
+	move $s2,$zero
+	move $s4,$s1
+concat_loop2_start_14:
+	lb $a0,0($s4)
+	beqz $a0,concat_loop2_end_15
+	addi $s2,$s2,1
+	addi $s4,$s4,1
+	j concat_loop2_start_14
+concat_loop2_end_15:
+	add $a0,$t9,$s2
+	addi $a0,$a0,1
+	li $v0,9
+	syscall
+	move $t1,$v0
+	move $s3,$v0
+	move $s4,$s0
+concat_loop3_start_16:
+	lb $a0,0($s4)
+	beqz $a0,concat_loop3_end_17
+	sb $a0,0($s3)
+	addi $s4,$s4,1
+	addi $s3,$s3,1
+	j concat_loop3_start_16
+concat_loop3_end_17:
+	move $s4,$s1
+concat_loop4_start_18:
+	lb $a0,0($s4)
+	sb $a0,0($s3)
+	beqz $a0,concat_loop4_end_19
+	addi $s4,$s4,1
+	addi $s3,$s3,1
+	j concat_loop4_start_18
+concat_loop4_end_19:
+	lw $t0,global_ssssss
+	move $s0,$t1
+	move $s1,$t0
+	move $s2,$zero
+	move $s4,$s0
+concat_loop1_start_20:
+	lb $a0,0($s4)
+	beqz $a0,concat_loop1_end_21
+	addi $s2,$s2,1
+	addi $s4,$s4,1
+	j concat_loop1_start_20
+concat_loop1_end_21:
+	move $t9,$s2
+	move $s2,$zero
+	move $s4,$s1
+concat_loop2_start_22:
+	lb $a0,0($s4)
+	beqz $a0,concat_loop2_end_23
+	addi $s2,$s2,1
+	addi $s4,$s4,1
+	j concat_loop2_start_22
+concat_loop2_end_23:
+	add $a0,$t9,$s2
+	addi $a0,$a0,1
+	li $v0,9
+	syscall
+	move $t0,$v0
+	move $s3,$v0
+	move $s4,$s0
+concat_loop3_start_24:
+	lb $a0,0($s4)
+	beqz $a0,concat_loop3_end_25
+	sb $a0,0($s3)
+	addi $s4,$s4,1
+	addi $s3,$s3,1
+	j concat_loop3_start_24
+concat_loop3_end_25:
+	move $s4,$s1
+concat_loop4_start_26:
+	lb $a0,0($s4)
+	sb $a0,0($s3)
+	beqz $a0,concat_loop4_end_27
+	addi $s4,$s4,1
+	addi $s3,$s3,1
+	j concat_loop4_start_26
+concat_loop4_end_27:
+	lw $t1,global_lolo
+	move $s0,$t0
+	move $s1,$t1
+	move $s2,$zero
+	move $s4,$s0
+concat_loop1_start_28:
+	lb $a0,0($s4)
+	beqz $a0,concat_loop1_end_29
+	addi $s2,$s2,1
+	addi $s4,$s4,1
+	j concat_loop1_start_28
+concat_loop1_end_29:
+	move $t9,$s2
+	move $s2,$zero
+	move $s4,$s1
+concat_loop2_start_30:
+	lb $a0,0($s4)
+	beqz $a0,concat_loop2_end_31
+	addi $s2,$s2,1
+	addi $s4,$s4,1
+	j concat_loop2_start_30
+concat_loop2_end_31:
+	add $a0,$t9,$s2
+	addi $a0,$a0,1
+	li $v0,9
+	syscall
+	move $t1,$v0
+	move $s3,$v0
+	move $s4,$s0
+concat_loop3_start_32:
+	lb $a0,0($s4)
+	beqz $a0,concat_loop3_end_33
+	sb $a0,0($s3)
+	addi $s4,$s4,1
+	addi $s3,$s3,1
+	j concat_loop3_start_32
+concat_loop3_end_33:
+	move $s4,$s1
+concat_loop4_start_34:
+	lb $a0,0($s4)
+	sb $a0,0($s3)
+	beqz $a0,concat_loop4_end_35
+	addi $s4,$s4,1
+	addi $s3,$s3,1
+	j concat_loop4_start_34
+concat_loop4_end_35:
+	lw $t0,global_lolo
+	move $s0,$t1
+	move $s1,$t0
+	move $s2,$zero
+	move $s4,$s0
+concat_loop1_start_36:
+	lb $a0,0($s4)
+	beqz $a0,concat_loop1_end_37
+	addi $s2,$s2,1
+	addi $s4,$s4,1
+	j concat_loop1_start_36
+concat_loop1_end_37:
+	move $t9,$s2
+	move $s2,$zero
+	move $s4,$s1
+concat_loop2_start_38:
+	lb $a0,0($s4)
+	beqz $a0,concat_loop2_end_39
+	addi $s2,$s2,1
+	addi $s4,$s4,1
+	j concat_loop2_start_38
+concat_loop2_end_39:
+	add $a0,$t9,$s2
+	addi $a0,$a0,1
+	li $v0,9
+	syscall
+	move $t1,$v0
+	move $s3,$v0
+	move $s4,$s0
+concat_loop3_start_40:
+	lb $a0,0($s4)
+	beqz $a0,concat_loop3_end_41
+	sb $a0,0($s3)
+	addi $s4,$s4,1
+	addi $s3,$s3,1
+	j concat_loop3_start_40
+concat_loop3_end_41:
+	move $s4,$s1
+concat_loop4_start_42:
+	lb $a0,0($s4)
+	sb $a0,0($s3)
+	beqz $a0,concat_loop4_end_43
+	addi $s4,$s4,1
+	addi $s3,$s3,1
+	j concat_loop4_start_42
+concat_loop4_end_43:
+	lw $t0,global_ssssss
+	move $s0,$t1
+	move $s1,$t0
+	move $s2,$zero
+	move $s4,$s0
+concat_loop1_start_44:
+	lb $a0,0($s4)
+	beqz $a0,concat_loop1_end_45
+	addi $s2,$s2,1
+	addi $s4,$s4,1
+	j concat_loop1_start_44
+concat_loop1_end_45:
+	move $t9,$s2
+	move $s2,$zero
+	move $s4,$s1
+concat_loop2_start_46:
+	lb $a0,0($s4)
+	beqz $a0,concat_loop2_end_47
+	addi $s2,$s2,1
+	addi $s4,$s4,1
+	j concat_loop2_start_46
+concat_loop2_end_47:
+	add $a0,$t9,$s2
+	addi $a0,$a0,1
+	li $v0,9
+	syscall
+	move $t0,$v0
+	move $s3,$v0
+	move $s4,$s0
+concat_loop3_start_48:
+	lb $a0,0($s4)
+	beqz $a0,concat_loop3_end_49
+	sb $a0,0($s3)
+	addi $s4,$s4,1
+	addi $s3,$s3,1
+	j concat_loop3_start_48
+concat_loop3_end_49:
+	move $s4,$s1
+concat_loop4_start_50:
+	lb $a0,0($s4)
+	sb $a0,0($s3)
+	beqz $a0,concat_loop4_end_51
+	addi $s4,$s4,1
+	addi $s3,$s3,1
+	j concat_loop4_start_50
+concat_loop4_end_51:
+	move $a0,$t0
+	li $v0,4
+	syscall
+	lw $t0,global_i
+	move $a0,$t0
+	li $v0,1
+	syscall
+	li $a0,32
+	li $v0,11
+	syscall
+	lw $t1,global_i
+	lw $t0,global_i
+	lw $t2,global_i
+	add $t0,$t0,$t2
+	li $t9,32767
+	ble $t0,$t9,add_no_overflow_52
+	li $t0,32767
+	j add_done_54
+add_no_overflow_52:
+	li $t9,-32768
+	bge $t0,$t9,add_no_underflow_53
+	li $t0,-32768
+add_no_underflow_53:
+add_done_54:
+	mul $t0,$t1,$t0
+	li $t9,32767
+	ble $t0,$t9,mul_no_overflow_55
+	li $t0,32767
+	j mul_done_57
+mul_no_overflow_55:
+	li $t9,-32768
+	bge $t0,$t9,mul_no_underflow_56
+	li $t0,-32768
+mul_no_underflow_56:
+mul_done_57:
+	sw $t0,global_i
+	lw $t0,global_i
+	move $a0,$t0
+	li $v0,1
+	syscall
+	li $a0,32
+	li $v0,11
+	syscall
+
+.data
+global_i: .word 0
+.text
+	li $v0,10
+	syscall

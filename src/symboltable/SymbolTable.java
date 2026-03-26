@@ -8,6 +8,7 @@ package symboltable;
 /*******************/
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.Set;
 
 /*******************/
 /* PROJECT IMPORTS */
@@ -288,6 +289,7 @@ public class SymbolTable
 	/* (No stack needed since classes can't nest)  */
 	/***********************************************/
 	private TypeClass currentClass = null;
+	private Set<String> visibleClassFields = null;
 	
 	/***********************************************/
 	/* Set current class                           */
@@ -311,6 +313,34 @@ public class SymbolTable
 	public TypeClass getCurrentClass()
 	{
 		return currentClass;
+	}
+
+	public void setVisibleClassFields(Set<String> fieldNames)
+	{
+		visibleClassFields = fieldNames;
+	}
+
+	public void clearVisibleClassFields()
+	{
+		visibleClassFields = null;
+	}
+
+	public Set<String> getVisibleClassFields()
+	{
+		return visibleClassFields;
+	}
+
+	public Type findOutermost(String name)
+	{
+		Type result = null;
+		for (SymbolTableEntry e = top; e != null; e = e.prevtop)
+		{
+			if (name.equals(e.name))
+			{
+				result = e.type;
+			}
+		}
+		return result;
 	}
 	
 	/***********************************************/

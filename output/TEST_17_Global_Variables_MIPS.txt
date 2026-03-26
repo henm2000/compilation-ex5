@@ -1,0 +1,157 @@
+.data
+string_access_violation: .asciiz "Access Violation"
+string_illegal_div_by_0: .asciiz "Illegal Division By Zero"
+string_invalid_ptr_dref: .asciiz "Invalid Pointer Dereference"
+global_counter: .word 0
+global_joy: .word 0
+global_alex: .word 0
+global_happy: .word 0
+.text
+main:
+	li $t0,7
+	sw $t0,global_counter
+	li $t0,9
+	sw $t0,global_joy
+	li $t0,10
+	sw $t0,global_alex
+	li $t0,6
+	sw $t0,global_happy
+	li $t2,1
+	li $t3,2
+	li $t1,3
+	li $t6,4
+	li $t4,5
+	li $t5,6
+	li $t0,7
+	add $t0,$t5,$t0
+	li $t9,32767
+	ble $t0,$t9,add_no_overflow_0
+	li $t0,32767
+	j add_done_2
+add_no_overflow_0:
+	li $t9,-32768
+	bge $t0,$t9,add_no_underflow_1
+	li $t0,-32768
+add_no_underflow_1:
+add_done_2:
+	add $t0,$t4,$t0
+	li $t9,32767
+	ble $t0,$t9,add_no_overflow_3
+	li $t0,32767
+	j add_done_5
+add_no_overflow_3:
+	li $t9,-32768
+	bge $t0,$t9,add_no_underflow_4
+	li $t0,-32768
+add_no_underflow_4:
+add_done_5:
+	add $t0,$t6,$t0
+	li $t9,32767
+	ble $t0,$t9,add_no_overflow_6
+	li $t0,32767
+	j add_done_8
+add_no_overflow_6:
+	li $t9,-32768
+	bge $t0,$t9,add_no_underflow_7
+	li $t0,-32768
+add_no_underflow_7:
+add_done_8:
+	add $t0,$t1,$t0
+	li $t9,32767
+	ble $t0,$t9,add_no_overflow_9
+	li $t0,32767
+	j add_done_11
+add_no_overflow_9:
+	li $t9,-32768
+	bge $t0,$t9,add_no_underflow_10
+	li $t0,-32768
+add_no_underflow_10:
+add_done_11:
+	add $t0,$t3,$t0
+	li $t9,32767
+	ble $t0,$t9,add_no_overflow_12
+	li $t0,32767
+	j add_done_14
+add_no_overflow_12:
+	li $t9,-32768
+	bge $t0,$t9,add_no_underflow_13
+	li $t0,-32768
+add_no_underflow_13:
+add_done_14:
+	add $t0,$t2,$t0
+	li $t9,32767
+	ble $t0,$t9,add_no_overflow_15
+	li $t0,32767
+	j add_done_17
+add_no_overflow_15:
+	li $t9,-32768
+	bge $t0,$t9,add_no_underflow_16
+	li $t0,-32768
+add_no_underflow_16:
+add_done_17:
+	sw $t0,global_alex
+	lw $t1,global_joy
+	lw $t0,global_counter
+	add $t0,$t1,$t0
+	li $t9,32767
+	ble $t0,$t9,add_no_overflow_18
+	li $t0,32767
+	j add_done_20
+add_no_overflow_18:
+	li $t9,-32768
+	bge $t0,$t9,add_no_underflow_19
+	li $t0,-32768
+add_no_underflow_19:
+add_done_20:
+	sw $t0,global_happy
+	lw $t1,global_alex
+	lw $t0,global_joy
+	add $t0,$t1,$t0
+	li $t9,32767
+	ble $t0,$t9,add_no_overflow_21
+	li $t0,32767
+	j add_done_23
+add_no_overflow_21:
+	li $t9,-32768
+	bge $t0,$t9,add_no_underflow_22
+	li $t0,-32768
+add_no_underflow_22:
+add_done_23:
+	sw $t0,global_counter
+	lw $t0,global_happy
+	lw $t1,global_happy
+	lw $t2,global_joy
+	mul $t1,$t1,$t2
+	li $t9,32767
+	ble $t1,$t9,mul_no_overflow_24
+	li $t1,32767
+	j mul_done_26
+mul_no_overflow_24:
+	li $t9,-32768
+	bge $t1,$t9,mul_no_underflow_25
+	li $t1,-32768
+mul_no_underflow_25:
+mul_done_26:
+	add $t0,$t0,$t1
+	li $t9,32767
+	ble $t0,$t9,add_no_overflow_27
+	li $t0,32767
+	j add_done_29
+add_no_overflow_27:
+	li $t9,-32768
+	bge $t0,$t9,add_no_underflow_28
+	li $t0,-32768
+add_no_underflow_28:
+add_done_29:
+	move $a0,$t0
+	li $v0,1
+	syscall
+	li $a0,32
+	li $v0,11
+	syscall
+
+.data
+global_alex: .word 0
+.text
+	li $v0,10
+	syscall

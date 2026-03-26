@@ -1,0 +1,52 @@
+.data
+string_access_violation: .asciiz "Access Violation"
+string_illegal_div_by_0: .asciiz "Illegal Division By Zero"
+string_invalid_ptr_dref: .asciiz "Invalid Pointer Dereference"
+vtable_A:
+.text
+main:
+	li $t0,8
+	move $a0,$t0
+	li $v0,9
+	syscall
+	move $t1,$v0
+	la $t0,vtable_A  # load vtable address for A
+	bnez $t1,store_continue_0
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_0:
+	sw $t0,0($t1)
+	li $t0,10
+	bnez $t1,store_continue_1
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_1:
+	sw $t0,4($t1)
+	sw $t1,global_a
+	lw $t0,global_a
+	bnez $t0,load_continue_2
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+load_continue_2:
+	lw $t0,4($t0)
+	move $a0,$t0
+	li $v0,1
+	syscall
+	li $a0,32
+	li $v0,11
+	syscall
+
+.data
+global_a: .word 0
+.text
+	li $v0,10
+	syscall

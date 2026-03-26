@@ -110,17 +110,7 @@ public class AstVarSubscript extends AstVar
 		}
 		
 		/*********************************/
-		/* [5] If subscript is constant, must be >= 0 */
-		/*********************************/
-		if (subscript instanceof AstExpInt) {
-			AstExpInt intExp = (AstExpInt) subscript;
-			if (intExp.value < 0) {
-				throw new SemanticErrorException(line);
-			}
-		}
-		
-		/*********************************/
-		/* [6] Store the type for use in irMe() */
+		/* [5] Store the type for use in irMe() */
 		/*********************************/
 		this.type = arrayType.elementType;
 		

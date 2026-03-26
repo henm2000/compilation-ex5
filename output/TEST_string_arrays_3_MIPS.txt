@@ -1,0 +1,231 @@
+.data
+string_access_violation: .asciiz "Access Violation"
+string_illegal_div_by_0: .asciiz "Illegal Division By Zero"
+string_invalid_ptr_dref: .asciiz "Invalid Pointer Dereference"
+.text
+main:
+	li $t1,1
+	li $t0,1
+	add $t2,$t1,$t0
+	li $t9,32767
+	ble $t2,$t9,add_no_overflow_0
+	li $t2,32767
+	j add_done_2
+add_no_overflow_0:
+	li $t9,-32768
+	bge $t2,$t9,add_no_underflow_1
+	li $t2,-32768
+add_no_underflow_1:
+add_done_2:
+	li $t0,4
+	mul $t0,$t2,$t0
+	li $t9,32767
+	ble $t0,$t9,mul_no_overflow_3
+	li $t0,32767
+	j mul_done_5
+mul_no_overflow_3:
+	li $t9,-32768
+	bge $t0,$t9,mul_no_underflow_4
+	li $t0,-32768
+mul_no_underflow_4:
+mul_done_5:
+	move $a0,$t0
+	li $v0,9
+	syscall
+	move $t0,$v0
+	bnez $t0,store_continue_6
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_6:
+	sw $t1,0($t0)
+	sw $t0,global_a1
+	li $t1,1
+	li $t0,1
+	add $t0,$t1,$t0
+	li $t9,32767
+	ble $t0,$t9,add_no_overflow_7
+	li $t0,32767
+	j add_done_9
+add_no_overflow_7:
+	li $t9,-32768
+	bge $t0,$t9,add_no_underflow_8
+	li $t0,-32768
+add_no_underflow_8:
+add_done_9:
+	li $t2,4
+	mul $t0,$t0,$t2
+	li $t9,32767
+	ble $t0,$t9,mul_no_overflow_10
+	li $t0,32767
+	j mul_done_12
+mul_no_overflow_10:
+	li $t9,-32768
+	bge $t0,$t9,mul_no_underflow_11
+	li $t0,-32768
+mul_no_underflow_11:
+mul_done_12:
+	move $a0,$t0
+	li $v0,9
+	syscall
+	move $t0,$v0
+	bnez $t0,store_continue_13
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_13:
+	sw $t1,0($t0)
+	sw $t0,global_a2
+	lw $t2,global_a1
+	li $t1,0
+.data
+string_const_0: .asciiz "test"
+.text
+	la $t0,string_const_0
+	bnez $t2,array_not_null_14
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_not_null_14:
+	bgez $t1,array_index_nonneg_15
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_nonneg_15:
+	lw $s0,0($t2)
+	blt $t1,$s0,array_index_ok_16
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_ok_16:
+	addi $s0,$t1,1
+	sll $s0,$s0,2
+	add $s0,$t2,$s0
+	sw $t0,0($s0)
+	lw $t0,global_a2
+	li $t1,0
+.data
+string_const_1: .asciiz "test"
+.text
+	la $t2,string_const_1
+	bnez $t0,array_not_null_17
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_not_null_17:
+	bgez $t1,array_index_nonneg_18
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_nonneg_18:
+	lw $s0,0($t0)
+	blt $t1,$s0,array_index_ok_19
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_ok_19:
+	addi $s0,$t1,1
+	sll $s0,$s0,2
+	add $s0,$t0,$s0
+	sw $t2,0($s0)
+	lw $t0,global_a1
+	li $t1,0
+	bnez $t0,array_not_null_20
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_not_null_20:
+	bgez $t1,array_index_nonneg_21
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_nonneg_21:
+	lw $s0,0($t0)
+	blt $t1,$s0,array_index_ok_22
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_ok_22:
+	addi $s0,$t1,1
+	sll $s0,$s0,2
+	add $s0,$t0,$s0
+	lw $t0,0($s0)
+	lw $t1,global_a2
+	li $t2,0
+	bnez $t1,array_not_null_23
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_not_null_23:
+	bgez $t2,array_index_nonneg_24
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_nonneg_24:
+	lw $s0,0($t1)
+	blt $t2,$s0,array_index_ok_25
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_ok_25:
+	addi $s0,$t2,1
+	sll $s0,$s0,2
+	add $s0,$t1,$s0
+	lw $t1,0($s0)
+	move $s0,$t0
+	move $s1,$t1
+strcmp_loop_start_26:
+	lb $t9,0($s0)
+	lb $a0,0($s1)
+	bne $t9,$a0,strcmp_not_equal_27
+	beqz $t9,strcmp_equal_28
+	addi $s0,$s0,1
+	addi $s1,$s1,1
+	j strcmp_loop_start_26
+strcmp_equal_28:
+	li $t0,1
+	j strcmp_done_29
+strcmp_not_equal_27:
+	li $t0,0
+strcmp_done_29:
+	move $a0,$t0
+	li $v0,1
+	syscall
+	li $a0,32
+	li $v0,11
+	syscall
+
+.data
+global_a1: .word 0
+global_a2: .word 0
+.text
+	li $v0,10
+	syscall

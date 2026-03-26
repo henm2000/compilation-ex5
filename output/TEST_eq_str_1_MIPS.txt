@@ -1,0 +1,47 @@
+.data
+string_access_violation: .asciiz "Access Violation"
+string_illegal_div_by_0: .asciiz "Illegal Division By Zero"
+string_invalid_ptr_dref: .asciiz "Invalid Pointer Dereference"
+.text
+main:
+.data
+string_const_0: .asciiz "Hello"
+.text
+	la $t0,string_const_0
+	sw $t0,global_s1
+.data
+string_const_1: .asciiz "Not"
+.text
+	la $t0,string_const_1
+	sw $t0,global_s2
+	lw $t0,global_s1
+	lw $t1,global_s2
+	move $s0,$t0
+	move $s1,$t1
+strcmp_loop_start_0:
+	lb $t9,0($s0)
+	lb $a0,0($s1)
+	bne $t9,$a0,strcmp_not_equal_1
+	beqz $t9,strcmp_equal_2
+	addi $s0,$s0,1
+	addi $s1,$s1,1
+	j strcmp_loop_start_0
+strcmp_equal_2:
+	li $t0,1
+	j strcmp_done_3
+strcmp_not_equal_1:
+	li $t0,0
+strcmp_done_3:
+	move $a0,$t0
+	li $v0,1
+	syscall
+	li $a0,32
+	li $v0,11
+	syscall
+
+.data
+global_s1: .word 0
+global_s2: .word 0
+.text
+	li $v0,10
+	syscall

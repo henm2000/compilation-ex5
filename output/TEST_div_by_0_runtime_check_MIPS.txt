@@ -1,0 +1,58 @@
+.data
+string_access_violation: .asciiz "Access Violation"
+string_illegal_div_by_0: .asciiz "Illegal Division By Zero"
+string_invalid_ptr_dref: .asciiz "Invalid Pointer Dereference"
+global_i: .word 0
+.text
+main:
+	li $t0,6
+	sw $t0,global_i
+Label_1_start:
+	lw $t1,global_i
+	li $t0,1
+	add $t0,$t1,$t0
+	li $t9,32767
+	ble $t0,$t9,add_no_overflow_0
+	li $t0,32767
+	j add_done_2
+add_no_overflow_0:
+	li $t9,-32768
+	bge $t0,$t9,add_no_underflow_1
+	li $t0,-32768
+add_no_underflow_1:
+add_done_2:
+	beq $t0,$zero,Label_0_end
+	li $t1,8
+	lw $t0,global_i
+	bnez $t0,div_continue_3
+	la $a0,string_illegal_div_by_0
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+div_continue_3:
+	div $t1,$t0
+	mflo $t0
+	sw $t0,global_j
+	lw $t1,global_i
+	li $t0,1
+	sub $t0,$t1,$t0
+	li $t9,32767
+	ble $t0,$t9,sub_no_overflow_4
+	li $t0,32767
+	j sub_done_6
+sub_no_overflow_4:
+	li $t9,-32768
+	bge $t0,$t9,sub_no_underflow_5
+	li $t0,-32768
+sub_no_underflow_5:
+sub_done_6:
+	sw $t0,global_i
+	j Label_1_start
+Label_0_end:
+
+.data
+global_j: .word 0
+.text
+	li $v0,10
+	syscall

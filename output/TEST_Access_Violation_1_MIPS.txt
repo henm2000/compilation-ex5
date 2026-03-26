@@ -1,0 +1,80 @@
+.data
+string_access_violation: .asciiz "Access Violation"
+string_illegal_div_by_0: .asciiz "Illegal Division By Zero"
+string_invalid_ptr_dref: .asciiz "Invalid Pointer Dereference"
+.text
+main:
+	li $t1,6
+	li $t0,1
+	add $t2,$t1,$t0
+	li $t9,32767
+	ble $t2,$t9,add_no_overflow_0
+	li $t2,32767
+	j add_done_2
+add_no_overflow_0:
+	li $t9,-32768
+	bge $t2,$t9,add_no_underflow_1
+	li $t2,-32768
+add_no_underflow_1:
+add_done_2:
+	li $t0,4
+	mul $t0,$t2,$t0
+	li $t9,32767
+	ble $t0,$t9,mul_no_overflow_3
+	li $t0,32767
+	j mul_done_5
+mul_no_overflow_3:
+	li $t9,-32768
+	bge $t0,$t9,mul_no_underflow_4
+	li $t0,-32768
+mul_no_underflow_4:
+mul_done_5:
+	move $a0,$t0
+	li $v0,9
+	syscall
+	move $t0,$v0
+	bnez $t0,store_continue_6
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_6:
+	sw $t1,0($t0)
+	sw $t0,global_A
+	lw $t0,global_A
+	li $t1,18
+	bnez $t0,array_not_null_7
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_not_null_7:
+	bgez $t1,array_index_nonneg_8
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_nonneg_8:
+	lw $s0,0($t0)
+	blt $t1,$s0,array_index_ok_9
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_ok_9:
+	addi $s0,$t1,1
+	sll $s0,$s0,2
+	add $s0,$t0,$s0
+	lw $t0,0($s0)
+	sw $t0,global_i
+
+.data
+global_A: .word 0
+global_i: .word 0
+.text
+	li $v0,10
+	syscall

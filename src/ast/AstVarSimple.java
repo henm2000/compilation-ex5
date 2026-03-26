@@ -79,6 +79,20 @@ public class AstVarSimple extends AstVar
                 if (isField) break;
                 cls = cls.father;
             }
+
+			// Declaration-order visibility inside class methods:
+			// if this field was declared after the current method,
+			// do not resolve it as an implicit field.
+			if (isField) {
+				java.util.Set<String> visibleFields = SymbolTable.getInstance().getVisibleClassFields();
+				if (visibleFields != null && !visibleFields.contains(name)) {
+					Type outer = SymbolTable.getInstance().findOutermost(name);
+					if (outer != null) {
+						result = outer;
+						isField = false;
+					}
+				}
+			}
             
             // 2. Robustness check: if not found in hierarchy (maybe wrapper issue?),
             // but not found in local/global scope either, it must be a field.

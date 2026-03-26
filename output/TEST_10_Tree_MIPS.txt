@@ -1,0 +1,1187 @@
+.data
+string_access_violation: .asciiz "Access Violation"
+string_illegal_div_by_0: .asciiz "Illegal Division By Zero"
+string_invalid_ptr_dref: .asciiz "Invalid Pointer Dereference"
+vtable_Tree:
+.text
+Label_sum:
+	subu $sp,$sp,4
+	sw $ra,0($sp)
+	subu $sp,$sp,4
+	sw $fp,0($sp)
+	move $fp,$sp
+	subu $sp,$sp,4
+	sw $t0,0($sp)
+	subu $sp,$sp,4
+	sw $t1,0($sp)
+	subu $sp,$sp,4
+	sw $t2,0($sp)
+	subu $sp,$sp,4
+	sw $t3,0($sp)
+	subu $sp,$sp,4
+	sw $t4,0($sp)
+	subu $sp,$sp,4
+	sw $t5,0($sp)
+	subu $sp,$sp,4
+	sw $t6,0($sp)
+	subu $sp,$sp,4
+	sw $t7,0($sp)
+	subu $sp,$sp,4
+	sw $t8,0($sp)
+	subu $sp,$sp,4
+	sw $t9,0($sp)
+	subu $sp,$sp,48
+	lw $t0,8($fp)
+	bnez $t0,load_continue_0
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+load_continue_0:
+	lw $t0,4($t0)
+	sw $t0,-44($fp)
+	lw $t0,8($fp)
+	bnez $t0,load_continue_1
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+load_continue_1:
+	lw $t0,8($t0)
+	sw $t0,-48($fp)
+	lw $t0,8($fp)
+	bnez $t0,load_continue_2
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+load_continue_2:
+	lw $t0,12($t0)
+	sw $t0,-52($fp)
+	lw $t0,-52($fp)
+	sw $t0,-56($fp)
+	li $t2,1
+	lw $t0,-44($fp)
+	li $t1,0
+	beq $t0,$t1,Label_9_AssignOne
+	bne $t0,$t1,Label_10_AssignZero
+Label_9_AssignOne:
+	li $t0,1
+	j Label_8_end
+Label_10_AssignZero:
+	li $t0,0
+	j Label_8_end
+Label_8_end:
+	sub $t0,$t2,$t0
+	li $t9,32767
+	ble $t0,$t9,sub_no_overflow_3
+	li $t0,32767
+	j sub_done_5
+sub_no_overflow_3:
+	li $t9,-32768
+	bge $t0,$t9,sub_no_underflow_4
+	li $t0,-32768
+sub_no_underflow_4:
+sub_done_5:
+	beq $t0,$zero,Label_1_if_false
+Label_0_if_true:
+	lw $t1,-56($fp)
+	lw $t0,-44($fp)
+	# Save caller-saved registers
+	addiu $sp,$sp,-40
+	sw $t0,0($sp)
+	sw $t1,4($sp)
+	sw $t2,8($sp)
+	sw $t3,12($sp)
+	sw $t4,16($sp)
+	sw $t5,20($sp)
+	sw $t6,24($sp)
+	sw $t7,28($sp)
+	sw $t8,32($sp)
+	sw $t9,36($sp)
+	subu $sp,$sp,4
+	sw $t0,0($sp)
+	jal Label_sum
+	addu $sp,$sp,4
+	# Restore caller-saved registers
+	lw $t0,0($sp)
+	lw $t1,4($sp)
+	lw $t2,8($sp)
+	lw $t3,12($sp)
+	lw $t4,16($sp)
+	lw $t5,20($sp)
+	lw $t6,24($sp)
+	lw $t7,28($sp)
+	lw $t8,32($sp)
+	lw $t9,36($sp)
+	addiu $sp,$sp,40
+	move $t0,$v0
+	add $t0,$t1,$t0
+	li $t9,32767
+	ble $t0,$t9,add_no_overflow_6
+	li $t0,32767
+	j add_done_8
+add_no_overflow_6:
+	li $t9,-32768
+	bge $t0,$t9,add_no_underflow_7
+	li $t0,-32768
+add_no_underflow_7:
+add_done_8:
+	sw $t0,-56($fp)
+	j Label_2_if_end
+Label_1_if_false:
+Label_2_if_end:
+	li $t0,1
+	lw $t1,-48($fp)
+	li $t2,0
+	beq $t1,$t2,Label_12_AssignOne
+	bne $t1,$t2,Label_13_AssignZero
+Label_12_AssignOne:
+	li $t1,1
+	j Label_11_end
+Label_13_AssignZero:
+	li $t1,0
+	j Label_11_end
+Label_11_end:
+	sub $t0,$t0,$t1
+	li $t9,32767
+	ble $t0,$t9,sub_no_overflow_9
+	li $t0,32767
+	j sub_done_11
+sub_no_overflow_9:
+	li $t9,-32768
+	bge $t0,$t9,sub_no_underflow_10
+	li $t0,-32768
+sub_no_underflow_10:
+sub_done_11:
+	beq $t0,$zero,Label_4_if_false
+Label_3_if_true:
+	lw $t1,-56($fp)
+	lw $t0,-48($fp)
+	# Save caller-saved registers
+	addiu $sp,$sp,-40
+	sw $t0,0($sp)
+	sw $t1,4($sp)
+	sw $t2,8($sp)
+	sw $t3,12($sp)
+	sw $t4,16($sp)
+	sw $t5,20($sp)
+	sw $t6,24($sp)
+	sw $t7,28($sp)
+	sw $t8,32($sp)
+	sw $t9,36($sp)
+	subu $sp,$sp,4
+	sw $t0,0($sp)
+	jal Label_sum
+	addu $sp,$sp,4
+	# Restore caller-saved registers
+	lw $t0,0($sp)
+	lw $t1,4($sp)
+	lw $t2,8($sp)
+	lw $t3,12($sp)
+	lw $t4,16($sp)
+	lw $t5,20($sp)
+	lw $t6,24($sp)
+	lw $t7,28($sp)
+	lw $t8,32($sp)
+	lw $t9,36($sp)
+	addiu $sp,$sp,40
+	move $t0,$v0
+	add $t0,$t1,$t0
+	li $t9,32767
+	ble $t0,$t9,add_no_overflow_12
+	li $t0,32767
+	j add_done_14
+add_no_overflow_12:
+	li $t9,-32768
+	bge $t0,$t9,add_no_underflow_13
+	li $t0,-32768
+add_no_underflow_13:
+add_done_14:
+	sw $t0,-56($fp)
+	j Label_5_if_end
+Label_4_if_false:
+Label_5_if_end:
+	lw $t0,-56($fp)
+	move $v0,$t0
+	addu $sp,$sp,48
+	lw $t9,0($sp)
+	addu $sp,$sp,4
+	lw $t8,0($sp)
+	addu $sp,$sp,4
+	lw $t7,0($sp)
+	addu $sp,$sp,4
+	lw $t6,0($sp)
+	addu $sp,$sp,4
+	lw $t5,0($sp)
+	addu $sp,$sp,4
+	lw $t4,0($sp)
+	addu $sp,$sp,4
+	lw $t3,0($sp)
+	addu $sp,$sp,4
+	lw $t2,0($sp)
+	addu $sp,$sp,4
+	lw $t1,0($sp)
+	addu $sp,$sp,4
+	lw $t0,0($sp)
+	addu $sp,$sp,4
+	lw $fp,0($sp)
+	addu $sp,$sp,4
+	lw $ra,0($sp)
+	addu $sp,$sp,4
+	jr $ra
+main:
+	li $t0,16
+	move $a0,$t0
+	li $v0,9
+	syscall
+	move $t1,$v0
+	la $t0,vtable_Tree  # load vtable address for Tree
+	bnez $t1,store_continue_15
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_15:
+	sw $t0,0($t1)
+	li $t0,0
+	bnez $t1,store_continue_16
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_16:
+	sw $t0,4($t1)
+	li $t0,0
+	bnez $t1,store_continue_17
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_17:
+	sw $t0,8($t1)
+	li $t0,0
+	bnez $t1,store_continue_18
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_18:
+	sw $t0,12($t1)
+	sw $t1,global_root
+	li $t2,17
+	li $t0,1
+	add $t0,$t2,$t0
+	li $t9,32767
+	ble $t0,$t9,add_no_overflow_19
+	li $t0,32767
+	j add_done_21
+add_no_overflow_19:
+	li $t9,-32768
+	bge $t0,$t9,add_no_underflow_20
+	li $t0,-32768
+add_no_underflow_20:
+add_done_21:
+	li $t1,4
+	mul $t0,$t0,$t1
+	li $t9,32767
+	ble $t0,$t9,mul_no_overflow_22
+	li $t0,32767
+	j mul_done_24
+mul_no_overflow_22:
+	li $t9,-32768
+	bge $t0,$t9,mul_no_underflow_23
+	li $t0,-32768
+mul_no_underflow_23:
+mul_done_24:
+	move $a0,$t0
+	li $v0,9
+	syscall
+	move $t0,$v0
+	bnez $t0,store_continue_25
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_25:
+	sw $t2,0($t0)
+	sw $t0,global_TA
+	li $t0,0
+	sw $t0,global_i
+Label_7_start:
+	lw $t1,global_i
+	li $t0,17
+	blt $t1,$t0,Label_15_AssignOne
+	bge $t1,$t0,Label_16_AssignZero
+Label_15_AssignOne:
+	li $t0,1
+	j Label_14_end
+Label_16_AssignZero:
+	li $t0,0
+	j Label_14_end
+Label_14_end:
+	beq $t0,$zero,Label_6_end
+	lw $t1,global_TA
+	lw $t2,global_i
+	li $t0,16
+	move $a0,$t0
+	li $v0,9
+	syscall
+	move $t3,$v0
+	la $t0,vtable_Tree  # load vtable address for Tree
+	bnez $t3,store_continue_26
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_26:
+	sw $t0,0($t3)
+	li $t0,0
+	bnez $t3,store_continue_27
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_27:
+	sw $t0,4($t3)
+	li $t0,0
+	bnez $t3,store_continue_28
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_28:
+	sw $t0,8($t3)
+	li $t0,0
+	bnez $t3,store_continue_29
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_29:
+	sw $t0,12($t3)
+	bnez $t1,array_not_null_30
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_not_null_30:
+	bgez $t2,array_index_nonneg_31
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_nonneg_31:
+	lw $s0,0($t1)
+	blt $t2,$s0,array_index_ok_32
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_ok_32:
+	addi $s0,$t2,1
+	sll $s0,$s0,2
+	add $s0,$t1,$s0
+	sw $t3,0($s0)
+	lw $t0,global_TA
+	lw $t1,global_i
+	bnez $t0,array_not_null_33
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_not_null_33:
+	bgez $t1,array_index_nonneg_34
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_nonneg_34:
+	lw $s0,0($t0)
+	blt $t1,$s0,array_index_ok_35
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_ok_35:
+	addi $s0,$t1,1
+	sll $s0,$s0,2
+	add $s0,$t0,$s0
+	lw $t2,0($s0)
+	li $t1,19
+	lw $t0,global_i
+	mul $t0,$t1,$t0
+	li $t9,32767
+	ble $t0,$t9,mul_no_overflow_36
+	li $t0,32767
+	j mul_done_38
+mul_no_overflow_36:
+	li $t9,-32768
+	bge $t0,$t9,mul_no_underflow_37
+	li $t0,-32768
+mul_no_underflow_37:
+mul_done_38:
+	bnez $t2,store_continue_39
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_39:
+	sw $t0,12($t2)
+	lw $t1,global_i
+	li $t0,1
+	add $t0,$t1,$t0
+	li $t9,32767
+	ble $t0,$t9,add_no_overflow_40
+	li $t0,32767
+	j add_done_42
+add_no_overflow_40:
+	li $t9,-32768
+	bge $t0,$t9,add_no_underflow_41
+	li $t0,-32768
+add_no_underflow_41:
+add_done_42:
+	sw $t0,global_i
+	j Label_7_start
+Label_6_end:
+	lw $t1,global_root
+	lw $t2,global_TA
+	li $t0,0
+	bnez $t2,array_not_null_43
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_not_null_43:
+	bgez $t0,array_index_nonneg_44
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_nonneg_44:
+	lw $s0,0($t2)
+	blt $t0,$s0,array_index_ok_45
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_ok_45:
+	addi $s0,$t0,1
+	sll $s0,$s0,2
+	add $s0,$t2,$s0
+	lw $t0,0($s0)
+	bnez $t1,store_continue_46
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_46:
+	sw $t0,4($t1)
+	lw $t0,global_root
+	lw $t2,global_TA
+	li $t1,1
+	bnez $t2,array_not_null_47
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_not_null_47:
+	bgez $t1,array_index_nonneg_48
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_nonneg_48:
+	lw $s0,0($t2)
+	blt $t1,$s0,array_index_ok_49
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_ok_49:
+	addi $s0,$t1,1
+	sll $s0,$s0,2
+	add $s0,$t2,$s0
+	lw $t1,0($s0)
+	bnez $t0,store_continue_50
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_50:
+	sw $t1,8($t0)
+	lw $t0,global_root
+	bnez $t0,load_continue_51
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+load_continue_51:
+	lw $t2,4($t0)
+	lw $t0,global_TA
+	li $t1,2
+	bnez $t0,array_not_null_52
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_not_null_52:
+	bgez $t1,array_index_nonneg_53
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_nonneg_53:
+	lw $s0,0($t0)
+	blt $t1,$s0,array_index_ok_54
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_ok_54:
+	addi $s0,$t1,1
+	sll $s0,$s0,2
+	add $s0,$t0,$s0
+	lw $t0,0($s0)
+	bnez $t2,store_continue_55
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_55:
+	sw $t0,4($t2)
+	lw $t0,global_root
+	bnez $t0,load_continue_56
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+load_continue_56:
+	lw $t1,4($t0)
+	lw $t2,global_TA
+	li $t0,3
+	bnez $t2,array_not_null_57
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_not_null_57:
+	bgez $t0,array_index_nonneg_58
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_nonneg_58:
+	lw $s0,0($t2)
+	blt $t0,$s0,array_index_ok_59
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_ok_59:
+	addi $s0,$t0,1
+	sll $s0,$s0,2
+	add $s0,$t2,$s0
+	lw $t0,0($s0)
+	bnez $t1,store_continue_60
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_60:
+	sw $t0,8($t1)
+	lw $t0,global_root
+	bnez $t0,load_continue_61
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+load_continue_61:
+	lw $t0,8($t0)
+	lw $t2,global_TA
+	li $t1,4
+	bnez $t2,array_not_null_62
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_not_null_62:
+	bgez $t1,array_index_nonneg_63
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_nonneg_63:
+	lw $s0,0($t2)
+	blt $t1,$s0,array_index_ok_64
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_ok_64:
+	addi $s0,$t1,1
+	sll $s0,$s0,2
+	add $s0,$t2,$s0
+	lw $t1,0($s0)
+	bnez $t0,store_continue_65
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_65:
+	sw $t1,4($t0)
+	lw $t0,global_root
+	bnez $t0,load_continue_66
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+load_continue_66:
+	lw $t2,8($t0)
+	lw $t1,global_TA
+	li $t0,5
+	bnez $t1,array_not_null_67
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_not_null_67:
+	bgez $t0,array_index_nonneg_68
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_nonneg_68:
+	lw $s0,0($t1)
+	blt $t0,$s0,array_index_ok_69
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_ok_69:
+	addi $s0,$t0,1
+	sll $s0,$s0,2
+	add $s0,$t1,$s0
+	lw $t0,0($s0)
+	bnez $t2,store_continue_70
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_70:
+	sw $t0,8($t2)
+	lw $t0,global_root
+	bnez $t0,load_continue_71
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+load_continue_71:
+	lw $t0,4($t0)
+	bnez $t0,load_continue_72
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+load_continue_72:
+	lw $t2,4($t0)
+	lw $t0,global_TA
+	li $t1,6
+	bnez $t0,array_not_null_73
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_not_null_73:
+	bgez $t1,array_index_nonneg_74
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_nonneg_74:
+	lw $s0,0($t0)
+	blt $t1,$s0,array_index_ok_75
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_ok_75:
+	addi $s0,$t1,1
+	sll $s0,$s0,2
+	add $s0,$t0,$s0
+	lw $t0,0($s0)
+	bnez $t2,store_continue_76
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_76:
+	sw $t0,4($t2)
+	lw $t0,global_root
+	bnez $t0,load_continue_77
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+load_continue_77:
+	lw $t0,4($t0)
+	bnez $t0,load_continue_78
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+load_continue_78:
+	lw $t2,4($t0)
+	lw $t0,global_TA
+	li $t1,7
+	bnez $t0,array_not_null_79
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_not_null_79:
+	bgez $t1,array_index_nonneg_80
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_nonneg_80:
+	lw $s0,0($t0)
+	blt $t1,$s0,array_index_ok_81
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_ok_81:
+	addi $s0,$t1,1
+	sll $s0,$s0,2
+	add $s0,$t0,$s0
+	lw $t0,0($s0)
+	bnez $t2,store_continue_82
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_82:
+	sw $t0,8($t2)
+	lw $t0,global_root
+	bnez $t0,load_continue_83
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+load_continue_83:
+	lw $t0,4($t0)
+	bnez $t0,load_continue_84
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+load_continue_84:
+	lw $t2,8($t0)
+	lw $t1,global_TA
+	li $t0,8
+	bnez $t1,array_not_null_85
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_not_null_85:
+	bgez $t0,array_index_nonneg_86
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_nonneg_86:
+	lw $s0,0($t1)
+	blt $t0,$s0,array_index_ok_87
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_ok_87:
+	addi $s0,$t0,1
+	sll $s0,$s0,2
+	add $s0,$t1,$s0
+	lw $t0,0($s0)
+	bnez $t2,store_continue_88
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_88:
+	sw $t0,4($t2)
+	lw $t0,global_root
+	bnez $t0,load_continue_89
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+load_continue_89:
+	lw $t0,4($t0)
+	bnez $t0,load_continue_90
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+load_continue_90:
+	lw $t2,8($t0)
+	lw $t0,global_TA
+	li $t1,9
+	bnez $t0,array_not_null_91
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_not_null_91:
+	bgez $t1,array_index_nonneg_92
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_nonneg_92:
+	lw $s0,0($t0)
+	blt $t1,$s0,array_index_ok_93
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_ok_93:
+	addi $s0,$t1,1
+	sll $s0,$s0,2
+	add $s0,$t0,$s0
+	lw $t0,0($s0)
+	bnez $t2,store_continue_94
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_94:
+	sw $t0,8($t2)
+	lw $t0,global_root
+	bnez $t0,load_continue_95
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+load_continue_95:
+	lw $t0,8($t0)
+	bnez $t0,load_continue_96
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+load_continue_96:
+	lw $t1,4($t0)
+	lw $t0,global_TA
+	li $t2,10
+	bnez $t0,array_not_null_97
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_not_null_97:
+	bgez $t2,array_index_nonneg_98
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_nonneg_98:
+	lw $s0,0($t0)
+	blt $t2,$s0,array_index_ok_99
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_ok_99:
+	addi $s0,$t2,1
+	sll $s0,$s0,2
+	add $s0,$t0,$s0
+	lw $t0,0($s0)
+	bnez $t1,store_continue_100
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_100:
+	sw $t0,4($t1)
+	lw $t0,global_root
+	bnez $t0,load_continue_101
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+load_continue_101:
+	lw $t0,8($t0)
+	bnez $t0,load_continue_102
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+load_continue_102:
+	lw $t1,4($t0)
+	lw $t2,global_TA
+	li $t0,11
+	bnez $t2,array_not_null_103
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_not_null_103:
+	bgez $t0,array_index_nonneg_104
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_nonneg_104:
+	lw $s0,0($t2)
+	blt $t0,$s0,array_index_ok_105
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_ok_105:
+	addi $s0,$t0,1
+	sll $s0,$s0,2
+	add $s0,$t2,$s0
+	lw $t0,0($s0)
+	bnez $t1,store_continue_106
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_106:
+	sw $t0,8($t1)
+	lw $t0,global_root
+	bnez $t0,load_continue_107
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+load_continue_107:
+	lw $t0,8($t0)
+	bnez $t0,load_continue_108
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+load_continue_108:
+	lw $t2,8($t0)
+	lw $t1,global_TA
+	li $t0,12
+	bnez $t1,array_not_null_109
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_not_null_109:
+	bgez $t0,array_index_nonneg_110
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_nonneg_110:
+	lw $s0,0($t1)
+	blt $t0,$s0,array_index_ok_111
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_ok_111:
+	addi $s0,$t0,1
+	sll $s0,$s0,2
+	add $s0,$t1,$s0
+	lw $t0,0($s0)
+	bnez $t2,store_continue_112
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_112:
+	sw $t0,4($t2)
+	lw $t0,global_root
+	bnez $t0,load_continue_113
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+load_continue_113:
+	lw $t0,8($t0)
+	bnez $t0,load_continue_114
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+load_continue_114:
+	lw $t2,8($t0)
+	lw $t0,global_TA
+	li $t1,13
+	bnez $t0,array_not_null_115
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_not_null_115:
+	bgez $t1,array_index_nonneg_116
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_nonneg_116:
+	lw $s0,0($t0)
+	blt $t1,$s0,array_index_ok_117
+	la $a0,string_access_violation
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+array_index_ok_117:
+	addi $s0,$t1,1
+	sll $s0,$s0,2
+	add $s0,$t0,$s0
+	lw $t0,0($s0)
+	bnez $t2,store_continue_118
+	la $a0,string_invalid_ptr_dref
+	li $v0,4
+	syscall
+	li $v0,10
+	syscall
+store_continue_118:
+	sw $t0,8($t2)
+	lw $t0,global_root
+	# Save caller-saved registers
+	addiu $sp,$sp,-40
+	sw $t0,0($sp)
+	sw $t1,4($sp)
+	sw $t2,8($sp)
+	sw $t3,12($sp)
+	sw $t4,16($sp)
+	sw $t5,20($sp)
+	sw $t6,24($sp)
+	sw $t7,28($sp)
+	sw $t8,32($sp)
+	sw $t9,36($sp)
+	subu $sp,$sp,4
+	sw $t0,0($sp)
+	jal Label_sum
+	addu $sp,$sp,4
+	# Restore caller-saved registers
+	lw $t0,0($sp)
+	lw $t1,4($sp)
+	lw $t2,8($sp)
+	lw $t3,12($sp)
+	lw $t4,16($sp)
+	lw $t5,20($sp)
+	lw $t6,24($sp)
+	lw $t7,28($sp)
+	lw $t8,32($sp)
+	lw $t9,36($sp)
+	addiu $sp,$sp,40
+	move $t0,$v0
+	move $a0,$t0
+	li $v0,1
+	syscall
+	li $a0,32
+	li $v0,11
+	syscall
+
+.data
+global_root: .word 0
+global_TA: .word 0
+global_i: .word 0
+.text
+	li $v0,10
+	syscall
