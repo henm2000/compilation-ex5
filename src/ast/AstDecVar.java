@@ -12,6 +12,7 @@ public class AstDecVar extends AstDec
     public String id;
     public AstExp init; // may be null
     public int line;
+    public String runtimeName;
 
     public AstDecVar(String typeName, String id, AstExp init, int line)
     {
@@ -71,7 +72,14 @@ public class AstDecVar extends AstDec
         /************************************************/
         /* [4] Enter the Identifier to the Symbol Table */
         /************************************************/
-        SymbolTable.getInstance().enter(id, t);
+        boolean insideFunction = SymbolTable.getInstance().getCurrentReturnType() != null;
+        if (insideFunction) {
+            runtimeName = id + "__" + serialNumber;
+            SymbolTable.getInstance().enter(id, t, runtimeName);
+        } else {
+            runtimeName = id;
+            SymbolTable.getInstance().enter(id, t);
+        }
         
         /************************************************/
         /* [5] Check initialization expression type     */
@@ -93,17 +101,19 @@ public class AstDecVar extends AstDec
 
 	public Temp irMe()
 	{
+        String irName = (runtimeName != null) ? runtimeName : id;
+
 		// Determine scope: global if not in function, local otherwise
 		String scope = "global";
 		if (Ir.getInstance().isInFunction()) {
 			scope = "local";
 		}
 		
-		Ir.getInstance().AddIrCommand(new IrCommandAllocate(id, scope));
+        Ir.getInstance().AddIrCommand(new IrCommandAllocate(irName, scope));
 
 		if (init != null)
 		{
-			Ir.getInstance().AddIrCommand(new IrCommandStore(id, init.irMe()));
+            Ir.getInstance().AddIrCommand(new IrCommandStore(irName, init.irMe()));
 		}
 		return null;
 	}

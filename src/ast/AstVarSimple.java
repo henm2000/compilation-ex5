@@ -12,6 +12,7 @@ public class AstVarSimple extends AstVar
 	/************************/
 	public String name;
 	public int line;
+	public String resolvedRuntimeName;
 	/******************/
 	/* CONSTRUCTOR(S) */
 	/******************/
@@ -32,6 +33,7 @@ public class AstVarSimple extends AstVar
 		/*******************************/
 		this.name = name;
 		this.line = line;
+		this.resolvedRuntimeName = name;
 	}
 
 	/**************************************************/
@@ -62,6 +64,10 @@ public class AstVarSimple extends AstVar
 		if (result == null) {
 			throw new SemanticErrorException(line);
 		}
+		resolvedRuntimeName = SymbolTable.getInstance().findRuntimeName(name);
+		if (resolvedRuntimeName == null) {
+			resolvedRuntimeName = name;
+		}
 		
 		// Determine if it is a field
         isField = false;
@@ -90,6 +96,10 @@ public class AstVarSimple extends AstVar
 					if (outer != null) {
 						result = outer;
 						isField = false;
+						String outerRuntime = SymbolTable.getInstance().findOutermostRuntimeName(name);
+						if (outerRuntime != null) {
+							resolvedRuntimeName = outerRuntime;
+						}
 					}
 				}
 			}
@@ -133,7 +143,8 @@ public class AstVarSimple extends AstVar
              // 3. Load from memory
              Ir.getInstance().AddIrCommand(new IrCommandLoadMemory(t, t_this, offset));
         } else {
-		     Ir.getInstance().AddIrCommand(new IrCommandLoad(t, name));
+			 String irName = (resolvedRuntimeName != null) ? resolvedRuntimeName : name;
+		     Ir.getInstance().AddIrCommand(new IrCommandLoad(t, irName));
         }
 		return t;
 	}

@@ -54,36 +54,33 @@ public class FunctionInfo
 				IrCommandLabel label = (IrCommandLabel) cmd;
 				String labelName = label.labelName;
 				
-				// Check if this is a function label (starts with "Label_" followed by function name)
-				// or is "main" or other function entry point
-				if (labelName.equals("main") || labelName.startsWith("Label_")) {
+				// Check if this is an auto-generated internal label (loop/if/etc.)
+				// Format: Label_DIGITS_...
+				boolean isAutoLabel = labelName.matches("Label_\\d+_.*");
+
+				// Start a new function only for real function-entry labels.
+				// Internal labels must NOT reset currentFunc tracking.
+				if (labelName.equals("main") || (labelName.startsWith("Label_") && !isAutoLabel)) {
 					// End previous function if any
 					if (currentFunc != null) {
 						currentFunc.endIndex = i - 1;
 					}
-					
-					// Start new function
-					String funcName = labelName.equals("main") ? "main" : 
-					                  labelName.substring(6); // Remove "Label_" prefix
-					
-					// Check if it's an auto-generated loop label (e.g., Label_1_start)
-					// Format: Label_DIGITS_...
-					boolean isAutoLabel = labelName.matches("Label_\\d+_.*");
-					
-					// If it's main or NOT an auto-generated loop label, treat it as a function
-					if (labelName.equals("main") || !isAutoLabel) {
-						currentFunc = new FunctionInfo(labelName);
-						currentFunc.startIndex = i;
-						functions.put(labelName, currentFunc);
-						allTemps.clear(); // Reset temp tracking for this function
-					} else {
-						currentFunc = null; // This is a loop label, not a function
-					}
+
+					currentFunc = new FunctionInfo(labelName);
+					currentFunc.startIndex = i;
+					functions.put(labelName, currentFunc);
+					allTemps.clear(); // Reset temp tracking for this function
 				}
 			}
 			
 			// Track temps used in current function
 			if (currentFunc != null) {
+				if (cmd instanceof IrCommandAllocate) {
+					IrCommandAllocate alloc = (IrCommandAllocate) cmd;
+					if ("local".equals(alloc.scope)) {
+						currentFunc.numLocalVars++;
+					}
+				}
 				collectTempsFromCommand(cmd, allTemps);
 				currentFunc.numTemps = allTemps.size();
 			}

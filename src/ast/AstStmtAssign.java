@@ -153,7 +153,8 @@ public class AstStmtAssign extends AstStmt
 			    
 			} else {
                 Temp src = exp.irMe();
-    			Ir.getInstance().AddIrCommand(new IrCommandStore(simpleVar.name, src));
+				String irName = (simpleVar.resolvedRuntimeName != null) ? simpleVar.resolvedRuntimeName : simpleVar.name;
+				Ir.getInstance().AddIrCommand(new IrCommandStore(irName, src));
 			}
 		}
 		else if (var instanceof AstVarField) {

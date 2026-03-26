@@ -33,9 +33,19 @@ public class IrCommandCallIndirect extends IrCommand
 	{
 		mips.MipsGenerator gen = mips.MipsGenerator.getInstance();
 		
+		// 0. Null-check receiver object before vtable access
+		String labelObjNotNull = getFreshLabel("call_indirect_not_null");
+		String objReg = gen.tempToReg(objTemp);
+		gen.fileWriter.format("\tbnez %s,%s\n", objReg, labelObjNotNull);
+		gen.fileWriter.format("\tla $a0,string_invalid_ptr_dref\n");
+		gen.fileWriter.format("\tli $v0,4\n");
+		gen.fileWriter.format("\tsyscall\n");
+		gen.fileWriter.format("\tli $v0,10\n");
+		gen.fileWriter.format("\tsyscall\n");
+		gen.fileWriter.format("%s:\n", labelObjNotNull);
+
 		// 1. Load vtable pointer from object (at offset 0)
 		//    vtable_ptr = Mem[objTemp + 0]
-		String objReg = gen.tempToReg(objTemp);
 		gen.fileWriter.format("\tlw $t9,0(%s)  # load vtable ptr\n", objReg);
 		
 		// 2. Load method address from vtable

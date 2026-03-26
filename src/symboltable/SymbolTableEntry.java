@@ -22,6 +22,7 @@ public class SymbolTableEntry
 	/* name */
 	/********/
 	public String name;
+	public String runtimeName;
 
 	/******************/
 	/* TYPE value ... */
@@ -49,6 +50,7 @@ public class SymbolTableEntry
 	/******************/
 	public SymbolTableEntry(
 		String name,
+		String runtimeName,
 		Type type,
 		String classification,
 		int index,
@@ -58,6 +60,7 @@ public class SymbolTableEntry
 	{
 		this.index = index;
 		this.name = name;
+		this.runtimeName = runtimeName;
 		this.type = type;
 		this.next = next;
 		this.classification = classification;

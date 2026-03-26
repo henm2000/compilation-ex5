@@ -73,6 +73,11 @@ public class SymbolTable
 	/****************************************************************************/
 	public void enter(String name, Type t)
 	{
+		enter(name, t, name);
+	}
+
+	public void enter(String name, Type t, String runtimeName)
+	{
 		/*************************************************/
 		/* [1] Compute the hash value for this new entry */
 		/*************************************************/
@@ -87,7 +92,7 @@ public class SymbolTable
 		/**************************************************************************/
 		/* [3] Prepare a new symbol table entry with name, type, next and prevtop */
 		/**************************************************************************/
-		SymbolTableEntry e = new SymbolTableEntry(name, t, getClassification(t), hashValue, next, top, topIndex++);
+		SymbolTableEntry e = new SymbolTableEntry(name, runtimeName, t, getClassification(t), hashValue, next, top, topIndex++);
 
 		/**********************************************/
 		/* [4] Update the top of the symbol table ... */
@@ -120,6 +125,53 @@ public class SymbolTable
 			}
 		}
 		
+		return null;
+	}
+
+	public String findRuntimeName(String name)
+	{
+		for (SymbolTableEntry e = table[hash(name)]; e != null; e = e.next)
+		{
+			if (name.equals(e.name))
+			{
+				return e.runtimeName;
+			}
+		}
+		return null;
+	}
+
+	public String findOutermostRuntimeName(String name)
+	{
+		String result = null;
+		for (SymbolTableEntry e = top; e != null; e = e.prevtop)
+		{
+			if (name.equals(e.name))
+			{
+				result = e.runtimeName;
+			}
+		}
+		return result;
+	}
+
+	public String findRuntimeNameInCurrentScope(String name)
+	{
+		SymbolTableEntry scopeBoundary = null;
+		for (SymbolTableEntry e = top; e != null; e = e.prevtop)
+		{
+			if (e.name.equals("SCOPE-BOUNDARY"))
+			{
+				scopeBoundary = e;
+				break;
+			}
+		}
+
+		for (SymbolTableEntry e = top; e != null && e != scopeBoundary; e = e.prevtop)
+		{
+			if (name.equals(e.name))
+			{
+				return e.runtimeName;
+			}
+		}
 		return null;
 	}
 	
